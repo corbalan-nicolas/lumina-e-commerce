@@ -186,3 +186,17 @@ main > *:not(.ignore-smoke-overlap) {
   }
 }
 /*** SMOKE EFFECT |> END ***/
+
+
+
+@media (pointer: coarse) {
+  .pointer-fine {
+    display: none;
+  }
+}
+
+@media (pointer: fine) {
+  .pointer-coarse {
+    display: none;
+  }
+}

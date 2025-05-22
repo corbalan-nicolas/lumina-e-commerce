@@ -58,6 +58,63 @@
   .filters__container.active {
     display: flex;
   }
+
+
+
+
+  /*** ANIMATIONS / TRANSITIONS |> START ***/
+  body:not(.animations-none) {
+    .filters__container {
+      transition: all 400ms ease allow-discrete;
+      background-color: rgba(0 0 0 / 0);
+    }
+
+    .filters {
+      animation: filters-slide-out 300ms ease both;
+    }
+
+
+    #btnFiltersClose {
+      transition: transform 300ms ease;
+      transform: translateX(100%) rotateZ(90deg);
+    }
+
+    .filters__container.active {
+      background-color: rgba(0 0 0 / .6);
+      .filters {
+        animation: filters-slide-in 300ms ease both;
+      }
+
+      #btnFiltersClose {
+        transform: translateX(0) rotateZ(-90deg);
+      }
+    }
+  }
+  /*** ANIMATIONS / TRANSITIONS |> END ***/
+
+
+
+
+
+  /*** KEYFRAMES |> START ***/
+  @keyframes filters-slide-in {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes filters-slide-out {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(100%);
+    }
+  }
+  /*** KEYFRAMES |> END ***/
 }
 
 @media (width >= 600px) {

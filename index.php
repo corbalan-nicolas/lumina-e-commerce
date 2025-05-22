@@ -26,7 +26,7 @@ $view = View::validate_view($_GET["section"] ?? "catalog");
   <script defer src="js/app.js"></script>
 </head>
 
-<body class="animations-none">
+<body>
   <a href="#mainContent" class="skip-link">Saltar al contenido principal</a>
 
   <div id="smokeArea" class="smoke-area"></div>
@@ -50,7 +50,7 @@ $view = View::validate_view($_GET["section"] ?? "catalog");
           </svg>
         </button>
 
-        <!-- Navegación -->
+        <!-- Menu -->
         <button id="btnMenu" class="tab-ignore" title="Abrir / Cerrar menú">
           <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <!-- <path stroke="none" d="M0 0h24v24H0z" fill="none" /> -->
@@ -114,6 +114,29 @@ $view = View::validate_view($_GET["section"] ?? "catalog");
                   </li>
                 </ul>
               </nav>
+              <div class="menu__show-only-on-phone">
+                <strong class="menu__title">Accesibilidad</strong>
+                <ul>
+                  <li>
+                    <button id="btnAnimations" class="nav__item">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-ease-in-out">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M3 20c8 0 10 -16 18 -16" />
+                      </svg>
+                      <span>Desactivar animaciones</span>
+                    </button>
+                  </li>
+                  <li class="pointer-fine">
+                    <button id="btnAnimations" class="nav__item">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-ease-in-out">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M3 20c8 0 10 -16 18 -16" />
+                      </svg>
+                      <span>Desactivar efecto humo del cursor</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

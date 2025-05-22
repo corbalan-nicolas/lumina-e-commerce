@@ -11,15 +11,11 @@
     z-index: 10; 
 
     color: white;
-
-    transition: color 300ms .2s ease, transform .5s ease;
   }
 
   .icon-menu__path {
     transform-origin: center;
     transform-box: stroke-box;
-
-    transition: transform .4s ease, opacity .4s ease;
   }
   /*** OPEN / CLOSE BUTTON |> END ***/
 
@@ -43,7 +39,6 @@
     background-color: rgba(0 0 0 / .0);
 
     pointer-events: none;
-    transition: background-color 300ms ease;
   }
 
   .menu {
@@ -51,8 +46,6 @@
     grid-template-rows: auto 1fr;
     
     padding-left: 2rem;
-
-    transition: display .5s allow-discrete;
   }
 
   .menu__header {
@@ -63,8 +56,6 @@
 
     background-color: var(--col-marron);
 
-    /* transition: transform .5s ease;
-    transform: translateX(100%); */
     animation: slide-out .5s ease both;
   }
 
@@ -74,8 +65,6 @@
     color: var(--col-oscuro);
     background-color: var(--bg-main);
 
-    /* transition: transform .5s 50ms ease; */
-    /* transform: translateX(100%); */
     animation: slide-out .5s 50ms ease both;
   }
 
@@ -96,7 +85,25 @@
   /*** ANIMATIONS / TRANSITIONS |> START ***/
   body:not(.animations-none) {
     #btnMenu {
-      
+      transition: color 300ms .2s ease, transform .5s ease;
+    }
+
+    .icon-menu__path {
+      transition: transform .4s ease, opacity .4s ease;
+    }
+
+    .menu__container {
+      transition: background-color 300ms ease;
+    }
+
+    .menu {
+      transition: display .5s allow-discrete;
+    }
+  }
+
+  body.animations-none {
+    :is(.menu__header, .menu__body) {
+      animation-name: none !important;
     }
   }
   /*** ANIMATIONS / TRANSITIONS |> END ***/
@@ -172,15 +179,10 @@
 }
 
 @media (width >= 600px) {
-  #btnMenu {
-    display: none;
-  }
-
-  .menu__header {
-    display: none;
-  }
-
-  .menu__title {
+  #btnMenu,
+  .menu__header,
+  .menu__title,
+  .menu__show-only-on-phone {
     display: none;
   }
 

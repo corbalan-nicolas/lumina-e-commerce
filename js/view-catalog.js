@@ -1,24 +1,19 @@
-const btnFiltersOpen = $('#btnFilters')
-const btnFiltersClose = $('#btnFiltersClose')
-const filtersContainer = $('.filters__container')
-const inputScrollY = $('#inputScrollY');
+const $btnFiltersOpen = $('#btnFilters')
+const $btnFiltersClose = $('#btnFiltersClose')
+const $filtersContainer = $('.filters__container')
+const $inputScrollY = $('#inputScrollY')
 
-btnFiltersOpen.addEventListener('click', () => {
-  toggleOverlapElement({
-    toActive: [filtersContainer],
-    overlapCssSelector: '.filters__container'
-  })
-})
-
-btnFiltersClose.addEventListener('click', () => {
-  toggleOverlapElement({
-    toActive: [filtersContainer],
-    overlapCssSelector: '.filters__container'
+;[$btnFiltersOpen, $btnFiltersClose].forEach(element => {
+  element.addEventListener('click', () => {
+    toggleOverlapElement({
+      toActive: [$filtersContainer],
+      overlapCssSelector: '.filters__container'
+    })
   })
 })
 
 window.addEventListener('scroll', () => {
-  inputScrollY.value = window.scrollY
+  $inputScrollY.value = window.scrollY
 })
 
-window.scrollTo(0, inputScrollY.value)
+window.scrollTo(0, $inputScrollY.value)

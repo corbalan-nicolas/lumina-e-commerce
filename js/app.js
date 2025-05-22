@@ -2,6 +2,8 @@
 const $ = selector => document.querySelector(selector)
 const $$ = selector => document.querySelectorAll(selector)
 
+// let animationsAreDisabled = localStorage.getItem('animationsEnabled') ?? true
+const $btnAnimations = $('#btnAnimations')
 const $btnMenu = $('#btnMenu')
 const $menuContainer = $('.menu__container')
 
@@ -12,6 +14,15 @@ const $smokeArea = $('#smokeArea')
 const $btnSmoke = $('#btnSmoke')
 
 // EVENTS
+$btnAnimations.addEventListener('click', () => {
+  const result = document.body.classList.toggle('animations-none')
+  let newText = 'Desactivar animaciones'
+  if(result) {
+    newText = 'Activar animaciones'
+  }
+  
+  $btnAnimations.querySelector('span').innerText = newText
+})
 $btnMenu.addEventListener('click', () => {
   toggleOverlapElement({
     toActive: [$btnMenu, $menuContainer],
@@ -96,4 +107,12 @@ function createParticle(event) {
 }
 
 // INIT
+const animationsAreDisabled = document.body.classList.contains('animations-none')
+
+if(animationsAreDisabled) {
+  $btnAnimations.querySelector('span').innerText = 'Activar animaciones'
+}else {
+  $btnAnimations.querySelector('span').innerText = 'Desactivar animaciones'
+}
+
 if(smokeEffectIsOn) $btnSmoke.classList.add('active')
