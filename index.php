@@ -1,10 +1,10 @@
 <?php
 
-require_once "classes/View.php";
+require_once "functions/autoload.php";
 
 $view = View::validate_view($_GET["section"] ?? "catalog");
-
-
+Authentication::verifyView($view->getRestricted());
+$user = $_SESSION["user"] ?? false;
 ?>
 
 <!DOCTYPE html>
@@ -20,8 +20,15 @@ $view = View::validate_view($_GET["section"] ?? "catalog");
 
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/menu.css">
-  <link rel="stylesheet" href="css/filters.css">
   <script defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <?php
+  if ($view->getName() === "catalog") {
+  ?>
+    <link rel="stylesheet" href="css/filters.css">
+  <?php
+  }
+  ?>
 
   <script defer src="js/app.js"></script>
 </head>
@@ -29,7 +36,27 @@ $view = View::validate_view($_GET["section"] ?? "catalog");
 <body>
   <a href="#mainContent" class="skip-link">Saltar al contenido principal</a>
 
-  <div id="smokeArea" class="smoke-area"></div>
+  <div id="smokeArea" class="smoke-area">
+    <!-- ¿Cómo funciona el "efecto humo"? ¿Cuál es su z-index?
+      Si el usuario tiene un cursor, éste mismo va a generar una especie de efecto humo,
+      cada particula que se genera (mediante el evento mouseover en el window) se appendea
+      acá, y para que no se vea por encima de los elementos decidí que iba a tener la
+      siguiente estructura:
+
+      -------------------------------------------------------------------------------------
+      Z-INDEX | ELEMENTO
+      --------+----------------------------------------------------------------------------
+        15    | "overlapElements" (menús, modales, etc)
+        10    | Header
+        2     | Hijos directos del <main> o estas cases".over-smoke, .over-smoke--childs"
+        1     | Partículas de humo
+        0     | La clase ".ignore-smoke-overlap", <main>, y todo lo demás
+      -------------------------------------------------------------------------------------
+
+      Usando "data-cpc" (proveniente de "Change-Particle-Color"), se puede cambiar el color
+      de la partícula pasándole como parámetro el nuevo color
+      -->
+  </div>
 
   <header class="container-full">
     <div class="container--logo">
@@ -42,7 +69,7 @@ $view = View::validate_view($_GET["section"] ?? "catalog");
     <div class="container--subheader">
       <div class="container subheader flex justify-end [@media(pointer:fine)]:justify-between">
         <button id="btnSmoke" title="Activar / Desactivar efecto de humo">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-matchstick">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M3 21l14 -9" />
             <path d="M17 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
@@ -51,7 +78,7 @@ $view = View::validate_view($_GET["section"] ?? "catalog");
         </button>
 
         <!-- Menu -->
-        <button id="btnMenu" class="tab-ignore" title="Abrir / Cerrar menú">
+        <button id="btnMenu" class="py-2 tab-ignore" title="Abrir / Cerrar menú">
           <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <!-- <path stroke="none" d="M0 0h24v24H0z" fill="none" /> -->
             <path class="icon-menu__path icon-menu__path--top" d="M4 6l16 0" />
@@ -70,69 +97,86 @@ $view = View::validate_view($_GET["section"] ?? "catalog");
                 <strong class="menu__title">Navegación</strong>
                 <ul>
                   <li>
-                    <a class="nav__item" href="index.php?section=catalog">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-candle">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M9 21h6v-10a1 1 0 0 0 -1 -1h-4a1 1 0 0 0 -1 1z" />
-                        <path d="M12 2l1.465 1.638a2 2 0 1 1 -3.015 .099z" />
-                      </svg>
+                  </li>
+                  <li>
+                    <a class="nav__item <?= $view->getName() == "catalog" ? "active" : "" ?>" href="index.php?section=catalog">
+                      <span class="icon icon--candle-white"></span>
                       <span>Productos</span>
                     </a>
                   </li>
                   <li>
-                    <a class="nav__item" href="index.php?section=about-us">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-users-group">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                        <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" />
-                        <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                        <path d="M17 10h2a2 2 0 0 1 2 2v1" />
-                        <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                        <path d="M3 13v-1a2 2 0 0 1 2 -2h2" />
-                      </svg>
+                    <a class="nav__item <?= $view->getName() == "about-us" ? "active" : "" ?>" href="index.php?section=about-us">
+                      <span class="icon icon--about-us-white"></span>
                       <span>Nosotros</span>
                     </a>
                   </li>
                   <li>
-                    <a class="nav__item" href="index.php?section=student">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-school">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" />
-                        <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
-                      </svg>
+                    <a class="nav__item <?= $view->getName() == "student" ? "active" : "" ?>" href="index.php?section=student">
+                      <span class="icon icon--school-white"></span>
                       <span>Alumno</span>
                     </a>
                   </li>
                   <li>
-                    <a class="nav__item" href="index.php?section=contact">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-phone">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" />
-                      </svg>
+                    <a class="nav__item <?= $view->getName() == "contact" ? "active" : "" ?>" href="index.php?section=contact">
+                      <span class="icon icon--phone-white"></span>
                       <span>Contacto</span>
                     </a>
                   </li>
+                  <?php
+                  if ($user) {
+                  ?>
+                    <li class="relative">
+                      <a class="nav__item" href>
+                        <span class="icon icon--user-white"></span>
+                        <span><?= $user["fullname"] ?></span>
+                      </a>
+                      <ul class="hidden absolute top-[100%] left-0 w-full bg-(--col-marron)">
+                        <?php
+                        if ($user["rol"] !== "customer") {
+                        ?>
+                          <li>
+                            <a class="nav__item" href="dashboard.php">
+                              <span>Panel de administrador</span>
+                            </a>
+                          </li>
+                        <?php
+                        }
+                        ?>
+                        <li>
+                          <a class="nav__item" href="actions/logout.php?login-again=true">
+                            <span class="icon icon--user-replace-white"></span>
+                            <span>Cambiar de cuenta</span>
+                          </a>
+                        </li>
+                        <li>
+                          <a class="nav__item" href="actions/logout.php">
+                            <span class="icon icon--logout-white"></span>
+                            <span>Cerrar sesión</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
+                  <?php
+                  } else {
+                  ?>
+                    <li>
+                      <a class="nav__item" href="index.php?section=login">
+                        <span class="icon icon--login-white"></span>
+                        <span>Iniciar sesión</span>
+                      </a>
+                    </li>
+                  <?php
+                  }
+                  ?>
                 </ul>
               </nav>
-              <div class="menu__show-only-on-phone">
+              <div class="menu__show-only-on-phone mt-6">
                 <strong class="menu__title">Accesibilidad</strong>
                 <ul>
                   <li>
                     <button id="btnAnimations" class="nav__item">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-ease-in-out">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M3 20c8 0 10 -16 18 -16" />
-                      </svg>
-                      <span>Desactivar animaciones</span>
-                    </button>
-                  </li>
-                  <li class="pointer-fine">
-                    <button id="btnAnimations" class="nav__item">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-ease-in-out">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M3 20c8 0 10 -16 18 -16" />
-                      </svg>
-                      <span>Desactivar efecto humo del cursor</span>
+                      <span class="icon icon--animation"></span>
+                      <span id="textAnimation">Desactivar animaciones</span>
                     </button>
                   </li>
                 </ul>
@@ -146,12 +190,15 @@ $view = View::validate_view($_GET["section"] ?? "catalog");
 
   <main id="mainContent" class="container">
     <?php
+    // echo "<pre>";
+    // print_r($_SESSION);
+    // echo "</pre>";
+
     require_once "views/{$view->getName()}.php";
     ?>
-    <div class="h-900"></div>
   </main>
 
-  <footer>
+  <footer class="over-smoke--childs">
     <div class="container">
       <p>&copy; Corbalan Nicolas Leonel, 2025</p>
     </div>
@@ -159,3 +206,9 @@ $view = View::validate_view($_GET["section"] ?? "catalog");
 </body>
 
 </html>
+
+<!-- TO DO
+[ ] Eliminar todos los console.log
+[ ] Eliminar todos los print_r
+[ ] Confirmar borrar (CRUD)
+-->

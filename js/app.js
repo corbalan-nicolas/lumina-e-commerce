@@ -2,7 +2,14 @@
 const $ = selector => document.querySelector(selector)
 const $$ = selector => document.querySelectorAll(selector)
 
+
+
+
+
+// VARIABLES
 // let animationsAreDisabled = localStorage.getItem('animationsEnabled') ?? true
+let animationsEnabled = JSON.parse(localStorage.getItem('animationsEnabled'))
+if (animationsEnabled === null) animationsEnabled = true
 const $btnAnimations = $('#btnAnimations')
 const $btnMenu = $('#btnMenu')
 const $menuContainer = $('.menu__container')
@@ -13,74 +20,75 @@ let particleColor = localStorage.getItem('particleColor') ?? 'rgb(200 200 200)'
 const $smokeArea = $('#smokeArea')
 const $btnSmoke = $('#btnSmoke')
 
+
+
+
+
 // EVENTS
-$btnAnimations.addEventListener('click', () => {
-  const result = document.body.classList.toggle('animations-none')
-  let newText = 'Desactivar animaciones'
-  if(result) {
-    newText = 'Activar animaciones'
-  }
-  
-  $btnAnimations.querySelector('span').innerText = newText
-})
-$btnMenu.addEventListener('click', () => {
+$btnAnimations.addEventListener('click', toggleAnimations)
+;[$btnMenu, $menuContainer].forEach(e => e.addEventListener('click', () => {
   toggleOverlapElement({
     toActive: [$btnMenu, $menuContainer],
-    overlapCssSelector: '.menu__container'
+    overlapCssSelector: '.menu__container',
+    maxBreakpoint: 640
   })
   $btnMenu.removeAttribute('tabindex')
-})
+}))
+$$('.menu > div').forEach(e => e.addEventListener('click', event => event.stopPropagation()))
 $btnSmoke.addEventListener('click', toggleSmokeEffect)
 document.addEventListener('mousemove', createParticle)
-// window.addEventListener('resize', () => {
-  // const innerWidth = window.innerWidth
+$$('[data-cpc]').forEach(e => e.addEventListener('mouseenter', event => {
+  console.log('HIAFASHFI')
+  particleColor = event.currentTarget.dataset.cpc
+  localStorage.setItem('particleColor', particleColor)
+}))
 
-  // if(innerWidth < 600) {
-  //   elem.setAttribute('tabindex', '-1')
-  //   $btnMenu.removeAttribute('active')
-  //   $menuContainer.removeAttribute('active')
-  // }else {
-  //   elem.removeAttribute('tabindex')
-  // }
-// })
+
+
+
 
 // METHODS
-function toggleMenu() {
-  $btnMenu.classList.toggle('active')
-  const isActive = $menuContainer.classList.toggle('active')
-  const tags = 'a, button, input'
-  const elements = $$(`:not(.menu__container :is(${tags})):is(${tags}):not(.tab-ignore)`)
-  // Ignora los elementos dentro del .menu__container, y selecciona todas las
-  // etiquetas de la variable tags que no tengan la clase .tab-ignore para
-  // aplicarles luego un tabindex -1, para que no sean focuseables
-  
-  // elements.forEach(elem => {
-  //   if(isActive) {
-  //     elem.setAttribute('tabindex', '-1')
-  //   }else {
-  //     elem.removeAttribute('tabindex')
-  //   }
-  // })
-}
-
 /**
- * 
+ * Este método recibe un objeto de configuración
  * @param {Array} toActive Array of DOM elements to toggle the .active class
  * @param {String} overlapCssSelector The css selector for the overlap container (to) 
  */
-function toggleOverlapElement({toActive, overlapCssSelector}) {
-  let isActive = false
+function toggleOverlapElement({toActive, overlapCssSelector, maxBreakpoint = Infinity, minBreakpoint = 0}) {
+  const currentBreakpoint = window.innerWidth
   const tags = 'a, button, input, select'
-  const toggleTabindex = $$(`:not(${overlapCssSelector} :is(${tags})):is(${tags})`)
 
-  toActive.forEach(element => isActive = element.classList.toggle('active'))
+  window.addEventListener('resize', disableOnBreakpoint)
 
-  toggleTabindex.forEach(element => {
-    element.setAttribute('tabindex', '-1')
+  if(currentBreakpoint >= minBreakpoint && currentBreakpoint <= maxBreakpoint) {
+    let isActive = false
+    const toggleTabindex = $$(`:not(${overlapCssSelector} :is(${tags})):is(${tags})`)
+
+    toActive.forEach(element => isActive = element.classList.toggle('active'))
+
+    toggleTabindex.forEach(element => {
+      element.setAttribute('tabindex', '-1')
+      if(!isActive) {
+        element.removeAttribute('tabindex')
+      }
+    })
+
     if(!isActive) {
-      element.removeAttribute('tabindex')
+      console.log('remover evento')
+      window.removeEventListener('resize', disableOnBreakpoint)
     }
-  })
+  }
+
+  function disableOnBreakpoint() {
+    // Se asume que si el link de "Saltar al contenido" tiene el atributo "tabindex"
+    // es porque el menú estába activo antes de que pase el breakpoint, por ende hay
+    // que desactivarlo
+    if((window.innerWidth < minBreakpoint || window.innerWidth > maxBreakpoint) && $('[tabindex="-1"]')) {
+      console.log('Borrar to\'')
+      $$('[tabindex="-1"]').forEach(e => e.removeAttribute('tabindex'))
+      toActive.forEach(e => e.classList.remove('active'))
+      window.removeEventListener('resize', disableOnBreakpoint)
+    }
+  }
 }
 
 function toggleSmokeEffect() {
@@ -88,6 +96,17 @@ function toggleSmokeEffect() {
   localStorage.setItem('smokeEffectIsOn', smokeEffectIsOn)
 
   $btnSmoke.classList.toggle('active')
+}
+
+function toggleAnimations() {
+  const result = document.body.classList.toggle('animations-none')
+  let newText = 'Desactivar animaciones'
+  if(result) {
+    newText = 'Activar animaciones'
+  }
+  
+  $('#textAnimation').innerText = newText
+  localStorage.setItem('animationsEnabled', !result)
 }
 
 function createParticle(event) {
@@ -106,13 +125,17 @@ function createParticle(event) {
   $particle.addEventListener('animationend', () => $particle.remove())
 }
 
-// INIT
-const animationsAreDisabled = document.body.classList.contains('animations-none')
 
-if(animationsAreDisabled) {
-  $btnAnimations.querySelector('span').innerText = 'Activar animaciones'
+
+
+
+// INIT
+let btnAnimationsText = 'Activar animaciones'
+if(animationsEnabled) {
+  btnAnimationsText = 'Desactivar animaciones'
 }else {
-  $btnAnimations.querySelector('span').innerText = 'Desactivar animaciones'
+  document.body.classList.add('animations-none')
 }
 
+;$('#textAnimation').innerText = btnAnimationsText
 if(smokeEffectIsOn) $btnSmoke.classList.add('active')

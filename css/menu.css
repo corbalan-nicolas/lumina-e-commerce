@@ -1,10 +1,19 @@
 .nav__item {
   display: flex;
   gap: .25rem;
+  padding: .5rem .75rem;
+
+  transition: 300ms ease;
 }
 
-/* Android */
-@media (width < 600px) {
+.nav__item:hover,
+.nav__item.active {
+  background-color: #3f444b;
+  color: white;
+}
+
+/* sm: (40rem || 640px) */
+@media (width <= 640px) {
   /*** OPEN / CLOSE BUTTON |> START ***/
   #btnMenu {
     position: sticky;
@@ -46,6 +55,8 @@
     grid-template-rows: auto 1fr;
     
     padding-left: 2rem;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .menu__header {
@@ -178,7 +189,7 @@
   /*** ACTIVES |> END ***/
 }
 
-@media (width >= 600px) {
+@media (width > 640px) {
   #btnMenu,
   .menu__header,
   .menu__title,
@@ -186,12 +197,11 @@
     display: none;
   }
 
-  nav ul {
+  nav > ul {
     display: flex;
-    gap: 1.5rem;
   }
 
-  .nav__item {
-    font-weight: 600;
+  nav > ul > li:has(ul):hover ul {
+    display: block;
   }
 }

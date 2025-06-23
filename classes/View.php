@@ -2,6 +2,7 @@
 
 class View
 {
+  private $id;
   private $name;
   private $title;
   private $active;
@@ -19,54 +20,48 @@ class View
    */
   public static function validate_view(?string $view): View
   {
-    $JSON = file_get_contents("db/views.json");
-    $JSONData = json_decode($JSON);
+    $conn = Connection::getConnection();
 
-    foreach ($JSONData as $item) {
-      if ($item->name == $view) {
+    $query = "SELECT * FROM views WHERE name = ?";
 
-        if ($item->active) {
+    $stmt = $conn->prepare($query);
+    $stmt->setFetchMode(PDO::FETCH_CLASS, self::class);
+    $stmt->execute([$view]);
 
-          if ($item->restricted) {
-            $view403 = new self;
+    $view = $stmt->fetch();
+    if (!$view) {
+      // 404
+      $view = new self();
 
-            $view403->name = "403";
-            $view403->title = "Acceso no autorizado";
-            $view403->active = 1;
-            $view403->restricted = 0;
-
-            return $view403;
-          } else {
-            $objView = new self();
-
-            $objView->name = $item->name;
-            $objView->title = $item->title;
-            $objView->active = $item->active;
-            $objView->restricted = $item->restricted;
-
-            return $objView;
-          }
-        }
-
-        $viewNoActive = new self;
-
-        $viewNoActive->name = "maintenance";
-        $viewNoActive->title = "Página no encontrada";
-        $viewNoActive->active = 1;
-        $viewNoActive->restricted = 0;
-
-        return $viewNoActive;
-      }
+      $view->name = "404";
+      $view->title = "Error 404";
+    } else if (!$view->active) {
+      // Maintenance
+      $view->name = "maintenance";
+      $view->title = "Página en mantenimiento";
     }
 
-    $view404 = new self();
+    return $view;
+  }
 
-    $view404->name = "404";
-    $view404->title = "Página no encontrada";
-    $view404->active = 1;
-    $view404->restricted = 0;
+  /**
+   * Get the value of id
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
 
-    return $view404;
+  /**
+   * Set the value of id
+   *
+   * @return  self
+   */
+  public function setId($id)
+  {
+    $this->id = $id;
+
+    return $this;
   }
 
   /**

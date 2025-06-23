@@ -7,8 +7,31 @@
   padding-block: .5rem;
 }
 
-.filters__footer-btn {
+.filters__label {
+  display: block;
   padding: .5rem 1rem;
+  border-radius: 0.25rem;
+
+  transition: background-color 300ms ease;
+
+  &:has(input:focus-visible) {
+    outline: 2px solid black;
+    outline-offset: -2px; 
+  }
+
+  &:has(:checked) {
+    background-color: var(--col-mint);
+  }
+}
+
+.filters__checkbox {
+  /* opacity: 0; */
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.filters__footer-btn {
   flex-grow: 1;
 }
 
@@ -21,7 +44,13 @@
   border-top: 1px solid rgba(0 0 0 / .2);
 }
 
-@media (width < 600px) {
+.filters__body ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+@media (width < 768px) {
   .filters__container {
     position: fixed;
     top: 0;
@@ -55,6 +84,10 @@
     margin-inline: auto;
   }
 
+  .filters__body {
+    overflow-y: auto;
+  }
+
   .filters__container.active {
     display: flex;
   }
@@ -70,23 +103,26 @@
     }
 
     .filters {
-      animation: filters-slide-out 300ms ease both;
+      animation: filters-slide-out .5s ease both;
     }
 
 
     #btnFiltersClose {
-      transition: transform 300ms ease;
-      transform: translateX(100%) rotateZ(90deg);
+      animation: btn-close-slide-out .5s ease both;
     }
-
+    
     .filters__container.active {
       background-color: rgba(0 0 0 / .6);
       .filters {
-        animation: filters-slide-in 300ms ease both;
+        animation: filters-slide-in .5s ease both;
+      }
+      
+      #btnFiltersClose {
+        animation: btn-close-slide-in .5s ease both;
       }
 
-      #btnFiltersClose {
-        transform: translateX(0) rotateZ(-90deg);
+      @starting-style {
+        background-color: rgba(0 0 0 / 0);
       }
     }
   }
@@ -114,11 +150,34 @@
       transform: translateY(100%);
     }
   }
+
+  @keyframes btn-close-slide-in {
+    from {
+      transform: translateX(100%) rotateZ(90deg);
+    }
+    to {
+      transform: translateX(0) rotateZ(-90deg);
+    }
+  }
+
+  @keyframes btn-close-slide-out {
+    from {
+      transform: translateX(0) rotateZ(-90deg);
+    }
+    to {
+      transform: translateX(100%) rotateZ(90deg);
+    }
+  }
   /*** KEYFRAMES |> END ***/
 }
 
-@media (width >= 600px) {
+@media (width >= 768px) {
   #btnFilters, #btnFiltersClose {
     display: none;
+  }
+
+  .filters {
+    border-radius: 0.25rem;
+    background-color: var(--bg-lighter);
   }
 }
