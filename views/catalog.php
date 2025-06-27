@@ -8,43 +8,15 @@
 $products = Candle::get_all_products();
 $categories = Category::get_all_categories();
 
-function mergeArrayOfClasses($arr1, $arr2)
-{
-  $result = $arr1;
-  $compare = [];
-
-  foreach ($arr2 as $obj) {
-    $compare[] = serialize($obj);
-  }
-
-  echo "<pre>";
-  print_r($compare);
-  echo "<pre>";
-
-  foreach ($arr1 as $obj) {
-    $serialized = serialize($obj);
-    if (in_array($serialized, $compare)) {
-      echo "Coincide        $serialized<br>";
-    } else {
-      echo "No coincide     $serialized<br>";
-    }
-  }
-
-  return $result;
-}
-
-
 $filters = $_POST;
 if (array_key_exists("discount", $filters)) {
   $tmp = Candle::filter_by_discount();
-
-  $products = mergeArrayOfClasses($products, $tmp);
+  $products = Candle::mergeArrays($products, $tmp);
 }
 
 if (array_key_exists("categories", $filters)) {
   $tmp = Candle::filter_by_categories($filters["categories"], $products);
-
-  $products = mergeArrayOfClasses($products, $tmp);
+  $products = Candle::mergeArrays($products, $tmp);
 }
 
 // echo "serialize:" . serialize($products[1]) . "<br><br><br><br><br><br>";
@@ -76,25 +48,14 @@ if (array_key_exists("categories", $filters)) {
   <aside>
     <!-- Button to OPEN filters on mobile devices -->
     <button id="btnFilters" class="over-smoke btn btn--outlined">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-adjustments-horizontal">
-        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-        <path d="M14 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-        <path d="M4 6l8 0" />
-        <path d="M16 6l4 0" />
-        <path d="M8 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-        <path d="M4 12l2 0" />
-        <path d="M10 12l10 0" />
-        <path d="M17 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-        <path d="M4 18l11 0" />
-        <path d="M19 18l1 0" />
-      </svg>
+      <span class="icon icon--filters"></span>
       Ver filtros
     </button>
 
     <div class="filters__container">
       <!-- Button to CLOSE the filters -->
-      <button id="btnFiltersClose" title=" Cerrar filtros">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x">
+      <button id="btnFiltersClose" title="Cerrar filtros">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M18 6l-12 12" />
           <path d="M6 6l12 12" />
@@ -161,7 +122,7 @@ if (array_key_exists("categories", $filters)) {
 
     if ($productsLength <= 0) {
     ?>
-      <div class="col-span-full border">
+      <div class="col-span-full">
         <p>No se encontraron productos</p>
       </div>
     <?php

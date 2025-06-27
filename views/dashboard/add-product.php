@@ -1,6 +1,24 @@
 <h2 class="text-4xl font-medium mx-4 my-8">Añadir nuevo producto</h2>
 
 <div class="p-4">
+
+
+
+
+
+  <!--
+  *********************************************************************************
+                                      ALERTS
+  *********************************************************************************
+  -->
+  <div>
+    <?= Alert::getAlerts() ?>
+  </div>
+
+
+
+
+
   <!--
   *********************************************************************************
                                         FORM
@@ -20,7 +38,7 @@
         <div class="mb-3">
           <label>
             Descripción <span class="text-red-500">*</span>
-            <textarea name="description" placeholder="Descripción del producto" autocomplete="off" required></textarea>
+            <textarea name="description" rows="6" placeholder="Descripción del producto" autocomplete="off" required></textarea>
           </label>
         </div>
 
@@ -65,7 +83,7 @@
         <div class="input-group mb-3">
           <input id="colorInput" name="cssColor" type="text" placeholder="Acepta rgb, hsl, hexadecimal o cualquier color nativo de css" autocomplete="off" required>
           <label class="has-focus-visible:ring-1">
-            <input id="colorPicker" class="sr-only" type="color">
+            <input id="colorPicker" class="sr-only" type="color" value="#7f7f7f">
             <span class="p-2 icon icon--picker"></span>
           </label>
         </div>

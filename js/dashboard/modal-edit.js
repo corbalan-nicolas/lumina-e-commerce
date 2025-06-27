@@ -1,21 +1,17 @@
 'use strict'
 
 const $modalEdit = $('#modalEdit')
-const $inputId = $('#inputId')
-const $inputName = $('#inputName')
-const $closeModal = $('#closeModal')
+const $modalEditId = $('#modalEditId')
+const $modalEditName = $('#modalEditName')
+const $modalEditClose = $('#modalEditClose')
 
-$$('.btn--edit').forEach($btn => $btn.addEventListener('click', () => {
-  const $tr = $btn.closest('.tr--parent')
-  const id = $tr.querySelector('.td--id')?.innerText
-  const name = $tr.querySelector('.td--name')?.innerText
+$$('button[data-function="open-modal-edit"]').forEach($btn => $btn.addEventListener('click', () => {
+  $modalEditId.value = $btn.dataset.id
+  $modalEditName.value = $btn.dataset.name
 
-  $inputId.value = id
-  $inputName.value = name
-  
   $modalEdit.showModal()
 }))
 
-$closeModal.addEventListener('click', () => {
+$modalEditClose.addEventListener('click', () => {
   $modalEdit.close()
 })

@@ -5,8 +5,10 @@ Authentication::verifyView(1, "../");
 
 try {
   Category::insert($_GET["category"]);
+
+  Alert::addAlert('success', 'La categoría se agregó correctamente');
 } catch (Exception $e) {
-  die("No se puso agregar la nueva categoría :c");
+  Alert::addAlert('danger', 'No se pudo agregar la categoría, contacte con servicio técnico');
 }
 
 header("Location: ../dashboard.php?section=admin-categories");

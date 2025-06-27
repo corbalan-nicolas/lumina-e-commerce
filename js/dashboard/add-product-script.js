@@ -43,3 +43,4 @@ function toggleInput() {
 
 // INIT
 toggleInput()
+$colorDiv.style.backgroundColor = $colorInput.value

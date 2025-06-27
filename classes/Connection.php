@@ -11,6 +11,12 @@ class Connection
 
   private static ?PDO $database = null;
 
+  /**
+   * Returns the PDO database connection instance.
+   * Establishes the connection if it hasn't been created yet.
+   *
+   * @return PDO The active PDO database connection.
+   */
   public static function getConnection(): PDO
   {
     if (self::$database === null) {
@@ -20,12 +26,18 @@ class Connection
     return self::$database;
   }
 
+  /**
+   * Establishes a new PDO connection to the database.
+   * If the connection fails, it stops execution with an error message.
+   *
+   * @return PDO The PDO database connection instance.
+   */
   public static function connect()
   {
     try {
       self::$database = new PDO(self::DB_DSN, self::DB_USERNAME, self::DB_PASSWORD);
     } catch (Exception $e) {
-      die('Hubo un error al conectarse a la Base de Datos');
+      die('Hubo un error al conectarse a la Base de Datos. Disculpe las molestias que esto pueda ocasionar.');
     }
 
     return self::$database;

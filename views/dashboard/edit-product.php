@@ -9,157 +9,183 @@ $candle = Candle::filter_by_id($id);
 // echo "</pre>";
 
 ?>
+<h2 class="text-4xl font-medium mx-4 my-8">Editar "<?= $candle->getName() ?>"</h2>
 
 <div class="p-4">
-  <h2>Editar producto</h2>
-
-
-
-
-
   <!--
   *********************************************************************************
                                         FORM
   *********************************************************************************
   -->
-  <form action="actions/add-product-acc.php" method="post" enctype="multipart/form-data">
+  <form class="grid gap-x-4 md:grid-cols-2" action="actions/edit-product-acc.php" method="post" enctype="multipart/form-data">
     <!-- Name, description, category -->
     <div>
+      <input type="hidden" name="id" value="<?= $candle->getId() ?>">
       <div>
-        <label>
-          Nombre
-          <input type="text" name="name" value="<?= $candle->getName() ?>" placeholder="Nombre del producto">
-        </label>
+        <div class="mb-3">
+          <label>
+            Nombre <span class="text-red-500">*</span>
+            <input type="text" name="name" value="<?= $candle->getName() ?>" placeholder="Preferiblemente que no sea muy largo" autocomplete="off" required>
+          </label>
+        </div>
+
+        <div class="mb-3">
+          <label>
+            Descripción <span class="text-red-500">*</span>
+            <textarea name="description" rows="6" placeholder="Descripción del producto" autocomplete="off" required><?= $candle->getDescription() ?></textarea>
+          </label>
+        </div>
+
+        <div>
+          <label for="selectCategory">Categoría <span class="text-red-500">*</span></label>
+          <div class="mb-3 flex gap-4">
+
+            <select id="selectCategory" class="py-2 px-4 bg-gray-100" name="category" required>
+              <?php
+              foreach (Category::get_all_categories() as $category) {
+                $selected = $category->getId() == $candle->getCategory()->getId() ? "selected" : "";
+              ?>
+                <option name="category" value="<?= $category->getId() ?>" <?= $selected ?>><?= $category->getName() ?></option>
+              <?php
+              }
+              ?>
+              <option value="newCategory">Añadir nueva categoría</option>
+            </select>
+            <input id="inputCategory" type="hidden" name="newCategory" placeholder="Nombre de la nueva categoría" autocomplete="off" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid gap-4 grid-cols-2">
+        <div class="mb-3">
+          <label>
+            Precio <span class="text-red-500">*</span>
+            <input type="number" min="0.01" max="99,99" step="0.01" name="price" value="<?= $candle->getPrice(false) ?>" placeholder="Ejemplo: 00,00" required>
+          </label>
+        </div>
+
+        <div class="mb-3">
+          <label>
+            Descuento <span class="text-red-500">*</span>
+            <input type="number" min="0" max="100" name="discount" value="<?= $candle->getDiscount() ?>" required>
+          </label>
+        </div>
       </div>
 
       <div>
-        <label>
-          Descripción
-          <textarea name="description" placeholder="Descripción del producto"></textarea>
-        </label>
-      </div>
-
-      <div>
-        <select id="selectCategory" name="category">
-          <option selected hidden>Selecciones una categoría</option>
-          <?php
-          foreach (Category::get_all_categories() as $category) {
-          ?>
-            <option name="category" value="<?= $category->getId() ?>"><?= $category->getName() ?></option>
-          <?php
-          }
-          ?>
-          <option value="newCategory">Añadir nueva categoría</option>
-        </select>
-        <input type="hidden" id="inputCategory" name="newCategory" placeholder="Nueva categoría">
+        <label for="colorInput">Color <span class="text-red-500">*</span></label>
+        <div class="input-group mb-3">
+          <input id="colorInput" name="cssColor" type="text" value="<?= $candle->getCssColor() ?>" placeholder="Acepta rgb, hsl, hexadecimal o cualquier color nativo de css" autocomplete="off" required>
+          <label class="has-focus-visible:ring-1">
+            <input id="colorPicker" class="sr-only" type="color" value="#7f7f7f">
+            <span class="p-2 icon icon--picker"></span>
+          </label>
+        </div>
+        Preview del color:
+        <div id="colorDiv" class="h-16 w-full mb-3"></div>
       </div>
     </div>
 
     <!-- Images -->
     <div>
-      <div>
-        <label>
-          Foto de portada
-          <input type="file" name="cover">
-        </label>
+      <div class="mb-3">
+        <div class="mb-3 gap-x-4 grid grid-cols-[auto_1fr] grid-rows-[auto_1fr]">
+          <img class="size-30 row-span-full" src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto de portada">
+          <label for="cover">Cambiar foto de portada</label>
+          <input id="cover" class="p-4 block w-full rounded border-2 border-dashed" type="file" name="cover">
+        </div>
+        <input type="hidden" name="originalCover" value="<?= $candle->getMainImg() ?>">
+
+        <div class="mb-[.80rem]">
+          <p>Eliminar imágenes secundarias</p>
+          <ul class="flex mb-3">
+            <?php
+            foreach ($candle->getExtraImg() as $i => $img) {
+            ?>
+              <label class="del-image">
+                <input type="checkbox" class="sr-only" name="deleteExtraImages[]" value="<?= $img->getId() ?>">
+                <img class="size-12" src="img/candles/carousel/<?= $img->getFilename() ?>" alt="Foto de producto <?= $i + 1 ?>" title="Eliminar">
+              </label>
+            <?php
+            }
+            ?>
+          </ul>
+          <label>
+            Añadir imágenes secundarias
+            <input class="p-4 block w-full rounded border-2 border-dashed" type="file" name="extra_images[]" multiple>
+          </label>
+        </div>
       </div>
 
-      <div>
-        <label>
-          Fotos secundarias (carrusel)
-          <input type="file" name="extra_images[]" multiple>
-        </label>
+      <div class="grid grid-cols-2 gap-x-4 gap-y-3 mb-3">
+        <div>
+          <label>
+            Material <span class="text-red-500">*</span>
+            <input type="text" name="material" value="<?= $candle->getMaterial() ?>" placeholder="Material de la vela" required>
+          </label>
+        </div>
+
+        <div>
+          <label>
+            Duración <span class="text-red-500">*</span>
+            <input type="text" name="duration" value="<?= $candle->getDuration() ?>" placeholder="Tiempo que dura encendida" required>
+          </label>
+        </div>
+
+        <div>
+          <label>
+            Tamaño <span class="text-red-500">*</span>
+            <input type="text" name="size" value="<?= $candle->getSize() ?>" placeholder="Alto x Ancho (en centímetros)" required>
+          </label>
+        </div>
+
+        <div>
+          <label>
+            Peso <span class="text-red-500">*</span>
+            <input type="text" name="weight" value="<?= $candle->getWeight() ?>" placeholder="Peso (en gramos)" required>
+          </label>
+        </div>
+
+        <div>
+          <label>
+            Fragancia <span class="text-red-500">*</span>
+            <input type="text" name="fragance" value="<?= $candle->getFragance() ?>" placeholder="Fragancia/s" required>
+          </label>
+        </div>
+      </div>
+
+      <div class="mb-3 grid grid-cols-3">
+        <p class="col-span-full">Etiquetas</p>
+        <?php
+        $candleTags = $candle->getArrayOfTagsId();
+        $tags = Tag::get_all_tags();
+
+        foreach ($tags as $tag) {
+          $checked = in_array($tag->getId(), $candleTags) ? "checked" : "";
+        ?>
+          <label>
+            <input type="checkbox" name="tags[]" value="<?= $tag->getId() ?>" <?= $checked ?>>
+            <?= $tag->getTag() ?>
+          </label>
+        <?php
+        }
+        ?>
       </div>
     </div>
 
-    <div>
-      <label>
-        Precio
-        <input type="text" name="price">
-      </label>
+    <div class="col-span-full my-3">
+      <button class="btn">Actualizar producto</button>
     </div>
-
-    <div>
-      <label>
-        Descuento
-        <input type="text" name="discount">
-      </label>
-    </div>
-
-    <div>
-      Color
-      <div class="grid grid-cols-[1fr_auto] grid-rows-[1fr]">
-        <input id="colorInput" name="cssColor" type="text" placeholder="Acepta rgb, hsl, hexadecimal o cualquier color nativo de css, hay que tener en cuenta la sintaxis">
-        <label>
-          <input id="colorPicker" class="sr-only" type="color">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-color-picker">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M11 7l6 6" />
-            <path d="M4 16l11.7 -11.7a1 1 0 0 1 1.4 0l2.6 2.6a1 1 0 0 1 0 1.4l-11.7 11.7h-4v-4z" />
-          </svg>
-        </label>
-      </div>
-      <div id="colorDiv" class="size-12 border"></div>
-    </div>
-
-    <div>
-      Etiquetas
-      <?php
-      $tags = Tag::get_all_tags();
-
-      foreach ($tags as $tag) {
-      ?>
-        <label>
-          <input type="checkbox" name="tags[]" value="<?= $tag->getId() ?>">
-          <?= $tag->getTag() ?>
-        </label>
-      <?php
-      }
-      ?>
-    </div>
-
-    <div>
-      <label>
-        Material
-        <input type="text" name="material">
-      </label>
-    </div>
-
-    <div>
-      <label>
-        Duración
-        <input type="text" name="duration">
-      </label>
-    </div>
-
-    <div>
-      <label>
-        Tamaño
-        <input type="text" name="size">
-      </label>
-    </div>
-
-    <div>
-      <label>
-        Peso
-        <input type="text" name="weight">
-      </label>
-    </div>
-
-    <div>
-      <label>
-        Fragancia
-        <input type="text" name="fragance">
-      </label>
-    </div>
-
-    <div>
-      <label>
-        <input type="checkbox" name="goBackToForm">
-        Redireccionar de nuevo a esta página luego de añadir el producto
-      </label>
-    </div>
-
-    <button>Añadir producto</button>
   </form>
 </div>
+
+
+
+
+
+<!--
+*********************************************************************************
+                                    SCRIPT
+*********************************************************************************
+-->
+<script defer src="js/dashboard/add-product-script.js"></script>

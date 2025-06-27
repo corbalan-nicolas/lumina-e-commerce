@@ -13,6 +13,7 @@ if (animationsEnabled === null) animationsEnabled = true
 const $btnAnimations = $('#btnAnimations')
 const $btnMenu = $('#btnMenu')
 const $menuContainer = $('.menu__container')
+const $alertButtons = $$('[data-alert-rol="close"]');
 
 let smokeEffectIsOn = JSON.parse(localStorage.getItem('smokeEffectIsOn')) ?? true
 let particleColor = localStorage.getItem('particleColor') ?? 'rgb(200 200 200)'
@@ -30,7 +31,7 @@ $btnAnimations.addEventListener('click', toggleAnimations)
   toggleOverlapElement({
     toActive: [$btnMenu, $menuContainer],
     overlapCssSelector: '.menu__container',
-    maxBreakpoint: 640
+    maxBreakpoint: 1024
   })
   $btnMenu.removeAttribute('tabindex')
 }))
@@ -41,6 +42,13 @@ $$('[data-cpc]').forEach(e => e.addEventListener('mouseenter', event => {
   console.log('HIAFASHFI')
   particleColor = event.currentTarget.dataset.cpc
   localStorage.setItem('particleColor', particleColor)
+}))
+$alertButtons.forEach($btn => $btn.addEventListener('click', () => {
+  $btn.closest('[data-alert-rol="container"]')?.remove()
+}))
+
+$$('[data-copy]').forEach($e => $e.addEventListener('click', () => {
+  navigator.clipboard.writeText($e.dataset.copy)
 }))
 
 

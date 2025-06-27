@@ -12,7 +12,59 @@ if (!$candle) {
 <?php
 } else {
 ?>
-  <div class="p-4 grid grid-cols-[1fr_1fr_1fr] grid-flow-col gap-4">
+  <div class="p-4 grid lg:grid-cols-[1fr_1fr_1fr] gap-4">
+
+
+
+
+
+    <!--
+  *********************************************************************************
+                                      CAROUSEL
+  *********************************************************************************
+  -->
+    <?php
+    if ($candle->getExtraImg()) { // Width extra images
+    ?>
+      <div class="grid col-span-2 grid-cols-[auto_1fr] grid-flow-col gap-4 col-2">
+        <div class="grid col-[2_/_span_1] place-content-center">
+          <img id="bigImg" class="max-h-[74dvh]" src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto del producto principal">
+        </div>
+        <div>
+          <ul id="carouselButtons" class="flex flex-col gap-4">
+            <li class="grid place-content-center w-12">
+              <button>
+                <img class="max-w-12 max-h-12" src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto del producto principal">
+              </button>
+            </li>
+            <?php
+            foreach ($candle->getExtraImg() as $i => $extraImage) {
+            ?>
+              <li class="grid place-content-center w-12">
+                <button>
+                  <img class="max-w-12 max-h-12" src="img/candles/carousel/<?= $extraImage->getFilename() ?>" alt="Foto de producto <?= $i ?>">
+                </button>
+              </li>
+            <?php
+            }
+            ?>
+          </ul>
+        </div>
+      </div>
+    <?php
+    } else { // Without extra images
+    ?>
+      <div class="grid col-span-2 place-content-center">
+        <img src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto del producto principal">
+      </div>
+    <?php
+    }
+    ?>
+
+
+
+
+
     <!--
   *********************************************************************************
                                   BASIC INFO + CTA
@@ -20,10 +72,21 @@ if (!$candle) {
   -->
     <div class="">
       <!-- Name + Category -->
-      <h2 class="border-s-6 border-[<?= $candle->getCssColor() ?>] px-2 inline-block text-xl font-medium" data-cpc="<?= $candle->getCssColor() ?>">
-        <?= $candle->getName() ?>
-      </h2>
-      <small class="px-4 rounded-full bg-gray-400/20"><?= $candle->getCategory()->getName() ?></small>
+      <div class="mb-2 flex gap-2 items-end">
+        <h2 class="border-s-6 border-[<?= $candle->getCssColor() ?>] px-2 inline-block text-xl font-medium" data-cpc="<?= $candle->getCssColor() ?>">
+          <?= $candle->getName() ?>
+        </h2>
+
+        <?php
+        if ($user && $user["rol"] !== "customer") {
+        ?>
+          <a class="icon icon--pencil" href="dashboard.php?section=edit-product&id=<?= $candle->getId() ?>"></a>
+        <?php
+        }
+        ?>
+
+        <small class="badge"><?= $candle->getCategory()->getName() ?></small>
+      </div>
 
       <!-- Price + Discount -->
       <?php
@@ -44,7 +107,7 @@ if (!$candle) {
       <?php
       if ($candle->getTags()) {
       ?>
-        <div class="my-2 border-y border-gray-300/70">
+        <div class="my-2 py-2 border-y border-gray-300/70">
           <span>Etiquetas: </span>
           <?php
           foreach ($candle->getTags() as $tag) {
@@ -61,11 +124,25 @@ if (!$candle) {
       <!-- Description -->
       <p><?= $candle->getDescription() ?></p>
 
+      <!-- Details -->
+      <div class="my-2 py-2 border-y border-gray-300/70">
+        <ul>
+          <?php foreach ($candle->getDetails() as $detail) { ?>
+            <li class="flex gap-2 my-1" title="<?= $detail["title"] ?>">
+              <span class="icon <?= $detail["icon"] ?>"></span>
+              <?= $detail["value"] ?>
+            </li>
+          <?php } ?>
+        </ul>
+      </div>
+
       <!-- Cta (form) -->
-      <form class="flex gap-4" action="#" method="post">
+      <form class="flex gap-4 justify-end" action="actions/cart-add-item-acc.php" method="get">
+        <input type="hidden" name="id" value="<?= $candle->getId() ?>">
+
         <label>
           <span class="sr-only">Cantidad</span>
-          <input type="number" min="1" max="99" value="1" placeholder="Cantidad">
+          <input type="number" name="amount" min="1" max="99" value="1" placeholder="Cantidad">
         </label>
 
         <button class="btn" type="submit">
@@ -74,99 +151,18 @@ if (!$candle) {
         </button>
       </form>
     </div>
-
-
-
-
-
-    <!--
-  *********************************************************************************
-                                      CAROUSEL
-  *********************************************************************************
-  -->
-    <?php
-    if ($candle->getExtraImg()) { // Width extra images
-    ?>
-      <div class="grid col-[1_/_span_1] grid-cols-[auto_1fr] grid-flow-col gap-4 col-2">
-        <div class="grid col-[2_/_span_1] place-content-center size-100 bg-[var(--bg-main)]">
-          <img id="bigImg" class="max-w-100 max-h-100" src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto del producto principal">
-        </div>
-        <div>
-          <ul id="carouselButtons" class="flex flex-col gap-4">
-            <li class="grid place-content-center w-12 bg-[var(--bg-main)]">
-              <button>
-                <img class="max-w-12 max-h-12" src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto del producto principal">
-              </button>
-            </li>
-            <?php
-            foreach ($candle->getExtraImg() as $i => $extraImage) {
-            ?>
-              <li class="grid place-content-center w-12 bg-[var(--bg-main)]">
-                <button>
-                  <img class="max-w-12 max-h-12" src="img/candles/carousel/<?= $extraImage->getFilename() ?>" alt="Foto de producto <?= $i ?>">
-                </button>
-              </li>
-            <?php
-            }
-            ?>
-          </ul>
-        </div>
-      </div>
-    <?php
-    } else { // Without extra images
-    ?>
-      <div>
-        <div class="grid col-[1_/_span_1] place-content-center size-100 bg-[var(--bg-main)]">
-          <img class="max-w-100 max-h-100" src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto del producto principal">
-        </div>
-      </div>
-    <?php
-    }
-    ?>
-
-
-
-
-
-    <!--
-  *********************************************************************************
-                                    CANDLE DETAILS
-  *********************************************************************************
-  -->
-    <div>
-      <h3>Detalles del producto:</h3>
-      <table class="w-full rounded overflow-hidden">
-        <?php
-        $dictionary = [
-          "material" => "Material",
-          "duration" => "Duración",
-          "size" => "Tamaño",
-          "weight" => "Peso",
-          "fragance" => "Fragancia"
-        ];
-        foreach ($candle->getDetails() as $key => $value) {
-        ?>
-          <tr class="odd:bg-gray-200 even:bg-[var(--bg-main)]">
-            <td class="px-4 py-2"><?= $dictionary[$key] ?></td>
-            <td class="px-4 py-2"><?= $value ?></td>
-          </tr>
-        <?php
-        }
-        ?>
-      </table>
-    </div>
-
-
-
-
-
-    <!--
-    *********************************************************************************
-                                        SCRIPTS
-    *********************************************************************************
-    -->
-    <script defer src="js/view-product-detail.js"></script>
   </div>
 <?php
 }
 ?>
+
+
+
+
+
+<!--
+*********************************************************************************
+                                    SCRIPTS
+*********************************************************************************
+-->
+<script defer src="js/view-product-detail.js"></script>

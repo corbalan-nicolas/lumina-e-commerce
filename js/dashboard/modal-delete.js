@@ -1,24 +1,17 @@
 'use strict'
 
 const $modalDelete = $('#modalDelete')
-const $inputId = $('#inputId')
-const $identifier = $('#identifier')
-const $closeModal = $('#closeModal')
+const $modalDeleteId = $('#modalDeleteId')
+const $modalDeleteName = $('#modalDeleteName')
+const $modalDeleteClose = $('#modalDeleteClose')
 
-$$('.btn--delete').forEach($btn => $btn.addEventListener('click', () => {
-  const $tr = $btn.closest('.tr--parent')
-  const id = $tr.querySelector('.td--id')?.innerText
-  const identifier = $tr.querySelector('.td--identifier')?.innerText
+$$('button[data-function="open-modal-delete"]').forEach($btn => $btn.addEventListener('click', () => {
+  $modalDeleteId.value = $btn.dataset.id
+  $modalDeleteName.innerText = $btn.dataset.name
 
-  console.log({id})
-  console.log({identifier})
-
-  $inputId.value = id
-  $identifier.innerText = identifier
-  
   $modalDelete.showModal()
 }))
 
-$closeModal.addEventListener('click', () => {
+$modalDeleteClose.addEventListener('click', () => {
   $modalDelete.close()
 })

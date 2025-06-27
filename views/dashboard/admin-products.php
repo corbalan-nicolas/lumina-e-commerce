@@ -8,132 +8,178 @@ $candles = Candle::get_all_products();
 
 <div class="p-4">
 
-  <a class="btn fixed bottom-4 right-4" href="dashboard.php?section=add-product">Agregar Nuevo Producto</a>
 
-  <div>
-    Mostrar / Ocultar atributos de la tabla
 
-    <?php
-    $values = [
-      "id" => "Id",
-      "cover" => "Portada de producto",
-      "carrusel" => "Fotos del carrusel",
-      "name" => "Nombre",
-      "descr" => "Descripción",
-      "category" => "Categoría",
-      "price" => "Precio",
-      "discount" => "Descuento",
-      "details" => "Detalle de producto",
-      "release" => "Fecha de publicación",
-      "color" => "Color identificativo del producto",
-    ];
 
-    foreach ($values as $key => $value) {
-    ?>
-      <label class="flex">
-        <input type="checkbox" name="<?= $key ?>">
-        <?= $value ?>
-      </label>
-    <?php
-    }
-    ?>
 
+  <!--
+  *********************************************************************************
+                                      ALERTS
+  *********************************************************************************
+  -->
+  <div class="mb-4">
+    <?= Alert::getAlerts() ?>
   </div>
 
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>Cover</th>
-        <th>Carrusel</th>
-        <th>Nombre</th>
-        <th>Descripción</th>
-        <th>Categoría</th>
-        <th>Etiquetas</th>
-        <th>Precio</th>
-        <th>Descuento</th>
-        <th>Detalles</th>
-        <th>Publicación</th>
-        <th>Color</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
+
+
+
+
+
+  <!--
+  *********************************************************************************
+                                      ADD NEW
+  *********************************************************************************
+  -->
+  <div class="pb-4 flex justify-end">
+    <a class="btn" href="dashboard.php?section=add-product">
+      <span class="icon icon--plus-white"></span>
+      Agregar Nuevo Producto
+    </a>
+  </div>
+
+
+
+
+
+
+
+  <!--
+  *********************************************************************************
+                                ALL PRODUCTS (LIST)
+  *********************************************************************************
+  -->
+  <div>
+    <ul class="sm:grid grid-cols-[auto_1fr]">
       <?php
       foreach ($candles as $candle) {
       ?>
-        <tr class="tr--parent">
-          <td class="td--id"><?= $candle->getId() ?></td>
-          <td><img src="<?= "img/candles/{$candle->getMainImg()}" ?>" alt="Foto de portada"></td>
-          <td>
-            <?php
-            foreach ($candle->getExtraImg() as $i => $img) {
-            ?>
-              <img class="size-8" src="<?= "img/candles/carousel/{$img->getFilename()}" ?>" alt="Foto de producto <?= $i + 1 ?>">
-            <?php
-            }
-            ?>
-          </td>
-          <td class="td--identifier"><a href="index.php?section=product-detail&id=<?= $candle->getId() ?>" title="Ir a la página del producto"><?= $candle->getName() ?></a></td>
-          <td><?= $candle->getDescription() ?></td>
-          <td><?= $candle->getCategory()->getName() ?></td>
-          <td>
-            <?php
-            foreach ($candle->getTags() as $tag) {
-            ?>
-              <span><?= $tag->getTag() ?></span>
-            <?php
-            }
-            ?>
-          </td>
-          <td>$<?= $candle->getPrice() ?></td>
-          <td><?= $candle->getDiscount() ?>% off</td>
-          <td>
-            <div class="flex gap-2" title="Material">
-              <span class="icon icon--box"></span>
-              <?= $candle->getDetails()["material"] ?>
+        <li class="mb-4 col-span-full sm:grid grid-cols-subgrid gap-4">
+          <div>
+            <!-- COVER -->
+            <img class="sm:max-w-60 sm:max-h-60" title="Foto de portada" src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto de portada del producto">
+
+
+            <!-- EXTRA IMAGES -->
+            <?php if (count($candle->getExtraImg())) { ?>
+
+              <ul title="Imágenes del carrusel" class="flex">
+                <?php foreach ($candle->getExtraImg() as $i => $img) { ?>
+                  <li>
+                    <img class="max-w-12 max-h-12" src="img/candles/carousel/<?= $img->getFilename() ?>" alt="Foto de producto <?= $i + 1 ?>">
+                  </li>
+                <?php } ?>
+              </ul>
+
+            <?php } ?>
+          </div>
+
+
+          <div>
+            <!-- ID + NAME + CATEOGRY + ACTIONS -->
+            <div class="flex gap-2">
+              <p title="Id">#<?= $candle->getId() ?> </p>
+              <h3 title="Nombre del producto"> | <a href="index.php?section=product-detail&id=<?= $candle->getId() ?>"><?= $candle->getName() ?></a></h3>
+              <p title="Categoría"> | <?= $candle->getCategory()->getName() ?></p>
+              <div class="flex grow-1 justify-end gap-4">
+                <a class="icon icon--pencil" href="dashboard.php?section=edit-product&id=<?= $candle->getId() ?>">Editar</a>
+                <button class="icon icon--trash" data-function="open-modal-delete" data-id="<?= $candle->getId() ?>" data-name="<?= $candle->getName() ?>">Eliminar</button>
+              </div>
             </div>
-            <div class="flex gap-2" title="Duración">
-              <span class="icon icon--clock"></span>
-              <?= $candle->getDetails()["duration"] ?>
+
+
+            <!-- PRICE + DISCOUNT -->
+            <div class="flex gap-2 items-end">
+              <p class="text-xl font-bold">USD $<?= $candle->getPrice() ?></p>
+              <?php if ($candle->getDiscount()) { ?>
+                <small><?= $candle->getDiscount() ?>% off</small>
+              <?php } ?>
             </div>
-            <div class="flex gap-2" title="Tamaño">
-              <span class="icon icon--ruler"></span>
-              <?= $candle->getDetails()["size"] ?>
-            </div>
-            <div class="flex gap-2" title="Peso">
-              <span class="icon icon--weight"></span>
-              <?= $candle->getDetails()["weight"] ?>
-            </div>
-            <div class="flex gap-2" title="Fragancia">
-              <span class="icon icon--plant"></span>
-              <?= $candle->getDetails()["fragance"] ?>
-            </div>
-          </td>
-          <td><?= $candle->getdateRelease() ?></td>
-          <td class="bg-[<?= $candle->getCssColor() ?>] rounded" data-cpc="<?= $candle->getCssColor() ?>"></td>
-          <td>
-            <a href="dashboard.php?section=edit-product&id=<?= $candle->getId() ?>">Editar</a>
-            <button class="btn--delete">Borrar</button>
-          </td>
-        </tr>
+
+
+            <!-- TAGS -->
+            <?php if ($candle->getTags()) { ?>
+              <div class="my-2 py-2 border-y border-gray-300/70">
+                <span>Etiquetas: </span>
+                <?php foreach ($candle->getTags() as $tag) { ?>
+                  <span><?= $tag->getTag() ?></span>
+                <?php } ?>
+              </div>
+            <?php } ?>
+
+
+            <!-- DESCRIPTION -->
+            <p><?= $candle->getDescription() ?></p>
+
+
+            <!-- DETAILS -->
+            <ul class="grid grid-cols-2 grid-rows-3">
+              <?php foreach ($candle->getDetails() as $detail) { ?>
+                <li class="flex gap-2 my-1" title="<?= $detail["title"] ?>">
+                  <span class="icon <?= $detail["icon"] ?>"></span>
+                  <?= $detail["value"] ?>
+                </li>
+              <?php } ?>
+              <li class="flex gap-2" title="Fecha de publicación">
+                <span class="icon icon--calendar"></span>
+                <?= $candle->getdateRelease() ?>
+              </li>
+            </ul>
+          </div>
+        </li>
       <?php
       }
       ?>
-    </tbody>
-  </table>
-
-  <dialog id="modalDelete" class="modal">
-    <p>¿Estás seguro de que querés borrar este producto?</p>
-    <strong id="identifier"></strong>
-    <form action="actions/delete-candle-acc.php" method="get">
-      <input type="hidden" id="inputId" name="id">
-      <div class="modal__footer">
-        <button id="closeModal" class="btn btn--outlined" type="button">Cancelar</button>
-        <button class="btn" type="submit">Confirmar</button>
-      </div>
-    </form>
-  </dialog>
+    </ul>
+    <!-- Every card has to show the following params:
+      - [x] Id
+      - [x] Name
+      - [x] Description
+      - [x] Category
+      - [ ] Tags
+      - [x] Price
+      - [x] Discount
+      - [x] Cover
+      - [x] Extra images 
+      - [x] Details
+      - [x] Date release
+      - [x] Actions
+    -->
+  </div>
 </div>
 
+
+
+
+
+
+<!--
+*********************************************************************************
+                            MODAL CONFIRM DELETE
+*********************************************************************************
+-->
+<dialog id="modalDelete" class="modal">
+  <p>¿Estás seguro de que querés borrar este producto?</p>
+  <strong id="modalDeleteName">nombre del producto</strong>
+
+  <form action="actions/delete-candle-acc.php" method="get">
+    <input type="hidden" id="modalDeleteId" name="id">
+    <div class="modal__footer">
+      <button id="modalDeleteClose" class="btn btn--outlined" type="button">Cancelar</button>
+      <button class="btn btn--danger" type="submit">Confirmar</button>
+    </div>
+  </form>
+
+</dialog>
+
+
+
+
+
+
+<!--
+*********************************************************************************
+                                    SCRIPTS
+*********************************************************************************
+-->
 <script defer src="js/dashboard/modal-delete.js"></script>

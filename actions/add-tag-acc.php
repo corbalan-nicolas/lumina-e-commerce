@@ -5,8 +5,10 @@ Authentication::verifyView(1, "../");
 
 try {
   Tag::insert($_POST["tag"]);
+
+  Alert::addAlert('success', 'La etiqueta se agregó correctamente');
 } catch (Exception $e) {
-  die("No se puso agregar la nueva etiqueta :c");
+  Alert::addAlert('danger', 'No se puedo agregar la etiqueta, contacte con servicio técnico');
 }
 
 header("Location: ../dashboard.php?section=admin-tags");

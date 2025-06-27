@@ -10,16 +10,21 @@ class Candle
   private $main_img;
   private $price;
   private $discount;
+  private $material;
+  private $duration;
+  private $size;
+  private $weight;
+  private $fragance;
   private Category $category;
   private array $tags;
-  private array $details;
   private array $extraImages;
 
-  private static $createValues = ["id", "name", "css_color", "date_release", "description", "main_img", "price", "discount"];
+  private static $createValues = ["id", "name", "css_color", "date_release", "description", "main_img", "price", "discount", "material", "duration", "size", "weight", "fragance"];
 
   /**
-   * @param ?int $candleData A, associative array with the following params: id, name, css_color, data_release, description, main_img, price, discount and tags
-   * @return ?Candle A candle complex object or null if not found
+   * Creates a complex object from a complex array
+   * @param array $candleData An associative array with the params of Candle->createValues + id_category + tags[id] + extra_images[id]
+   * @return ?Candle A beautiful Candle object
    */
   public static function createCandle(array $candleData): ?Candle
   {
@@ -59,19 +64,30 @@ class Candle
       $candle->extraImages[] = ExtraImage::filter_by_id($idImg);
     }
 
-    // DETAILS
-    $candle->details = [];
-    if (isset($candleData["material"])) {
-      $candle->details = [
-        "material" => $candleData["material"],
-        "duration" => $candleData["duration"],
-        "size" => $candleData["size"],
-        "weight" => $candleData["weight"],
-        "fragance" => $candleData["fragance"],
-      ];
+    return $candle;
+  }
+
+  /**
+   * Merges two array of Candle objects by saving the matches in a new array
+   * 
+   * @param array $array1 Array 1 of Candle objects
+   * @param array $array2 Array 2 of Candle objects
+   * 
+   * @return Candle[] A new array of Candle object
+   */
+  public static function mergeArrays(array $array1, array $array2): array
+  {
+    $result = [];
+
+    foreach ($array1 as $i) {
+      foreach ($array2 as $j) {
+        if ($i->id == $j->id) {
+          $result[] = $i;
+        }
+      }
     }
 
-    return $candle;
+    return $result;
   }
 
   /**
@@ -113,7 +129,14 @@ class Candle
   {
     $conn = Connection::getConnection();
 
-    $query = "SELECT * FROM candles WHERE discount > 0";
+    $query = "SELECT candles.*, candles_details.*, GROUP_CONCAT(DISTINCT tags.id) as tags, GROUP_CONCAT(DISTINCT extra_images.id) as extra_images 
+              FROM candles
+              JOIN candles_details ON candles.id = candles_details.id
+              LEFT OUTER JOIN extra_images ON candles.id = extra_images.id_candle
+              LEFT OUTER JOIN candles_x_tags ON candles.id = candles_x_tags.id_candle
+              LEFT OUTER JOIN tags ON candles_x_tags.id_tag = tags.id
+              WHERE discount > 0
+              GROUP BY candles.id";
 
     $stmt = $conn->prepare($query);
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -124,6 +147,10 @@ class Candle
     while ($res = $stmt->fetch()) {
       $catalog[] = self::createCandle($res);
     }
+
+    // echo "<pre>";
+    // print_r($catalog);
+    // echo "<pre>";
 
     return $catalog;
   }
@@ -149,8 +176,12 @@ class Candle
 
     $conn = Connection::getConnection();
 
-    $query = "SELECT candles.*, GROUP_CONCAT(extra_images.id) as extra_images FROM candles
+    $query = "SELECT candles.*, candles_details.*, GROUP_CONCAT(DISTINCT tags.id) as tags, GROUP_CONCAT(DISTINCT extra_images.id) as extra_images 
+              FROM candles
+              JOIN candles_details ON candles.id = candles_details.id
               LEFT OUTER JOIN extra_images ON candles.id = extra_images.id_candle
+              LEFT OUTER JOIN candles_x_tags ON candles.id = candles_x_tags.id_candle
+              LEFT OUTER JOIN tags ON candles_x_tags.id_tag = tags.id
               WHERE id_category IN ($holderString)
               GROUP BY candles.id";
 
@@ -200,22 +231,24 @@ class Candle
   }
 
   /**
-   * Insert a new candle into the database
+   * Inserts a new candle into the database
    * 
    * @param string $name
    * @param string $description
    * @param int $id_category
-   * @param string $cover
-   * @param int $price
+   * @param string $cover The filename of the cover
+   * @param float $price
    * @param int $discount
-   * @param string $css_color
+   * @param string $css_color Any valid css color to the smoke effect
    * @param string $material
    * @param string $duration
    * @param string $size
    * @param string $weight
    * @param string $fragance
+   * 
+   * @return int The new Candle's ID
    */
-  public static function insert(string $name, string $description, int $id_category, string $cover, int $price, int $discount, string $css_color, string $material, string $duration, string $size, string $weight, string $fragance)
+  public static function insert(string $name, string $description, int $id_category, string $cover, float $price, int $discount, string $css_color, string $material, string $duration, string $size, string $weight, string $fragance): int
   {
     $conn = Connection::getConnection();
 
@@ -249,20 +282,73 @@ class Candle
     return $candleId;
   }
 
-  public function edit($name)
+  /**
+   * Modifies the params of the object in the database
+   * 
+   * @param string $name
+   * @param string $description
+   * @param int $id_category
+   * @param string $cover The filename of the cover
+   * @param float $price
+   * @param int $discount
+   * @param string $css_color Any valid css color to the smoke effect
+   * @param string $material
+   * @param string $duration
+   * @param string $size
+   * @param string $weight
+   * @param string $fragance
+   * 
+   * @return void
+   */
+  public function edit(string $name, string $description, int $id_category, string $cover, float $price, int $discount, string $css_color, string $material, string $duration, string $size, string $weight, string $fragance): void
   {
     $conn = Connection::getConnection();
-    $query = "UPDATE candles SET name = :name WHERE id = :id";
+    $query = "UPDATE candles SET 
+              name = :name,
+              description = :description,
+              id_category = :id_category,
+              main_img = :cover,
+              price = :price,
+              discount = :discount,
+              css_color = :css_color
+              WHERE id = :id;
+
+              UPDATE candles_details SET
+              material = :material,
+              duration = :duration,
+              size = :size,
+              weight = :weight,
+              fragance = :fragance
+              WHERE id = :id_detail";
 
     $stmt = $conn->prepare($query);
     $stmt->execute([
       "id" => $this->id,
-      "name" => $name
+      "id_detail" => $this->id,
+      "name" => $name,
+      "description" => $description,
+      "id_category" => $id_category,
+      "cover" => $cover,
+      "price" => $price,
+      "discount" => $discount,
+      "css_color" => $css_color,
+      "material" => $material,
+      "duration" => $duration,
+      "size" => $size,
+      "weight" => $weight,
+      "fragance" => $fragance,
     ]);
   }
 
-  public function delete()
+  /**
+   * Deletes the candle from the database
+   * 
+   * @return void
+   */
+  public function delete(): void
   {
+    Image::delete("../img/candles/" . $this->main_img);
+
     $conn = Connection::getConnection();
 
     $query = "DELETE FROM candles_details WHERE id = ?;
@@ -272,6 +358,14 @@ class Candle
     $stmt->execute([$this->id, $this->id]);
   }
 
+  /**
+   * Adds a new record to the pivot table linking a candle with a tag.
+   *
+   * @param int $id_candle The ID of the candle.
+   * @param int $id_tag    The ID of the tag.
+   *
+   * @return void
+   */
   public static function addTag(int $id_candle, int $id_tag): void
   {
     $conn = Connection::getConnection();
@@ -282,6 +376,11 @@ class Candle
     $stmt->execute([$id_candle, $id_tag]);
   }
 
+  /**
+   * Removes all tag associations for the current candle from the pivot table.
+   *
+   * @return void
+   */
   public function clearTags(): void
   {
     $conn = Connection::getConnection();
@@ -292,6 +391,11 @@ class Candle
     $stmt->execute([$this->id]);
   }
 
+  /**
+   * Removes all images associations for the current candle from the extra_images table.
+   *
+   * @return void
+   */
   public function clearExtraImages()
   {
     $conn = Connection::getConnection();
@@ -527,23 +631,38 @@ class Candle
    */
   public function getDetails(): array
   {
-    return $this->details;
-  }
-
-  /**
-   * Set the value of details
-   *
-   * @return  self
-   */
-  public function setDetails(array $details)
-  {
-    $this->details = $details;
-
-    return $this;
+    return [
+      [
+        "title" => "Material",
+        "icon" => "icon--box",
+        "value" => $this->material
+      ],
+      [
+        "title" => "Duración",
+        "icon" => "icon--clock",
+        "value" => $this->duration
+      ],
+      [
+        "title" => "Tamaño",
+        "icon" => "icon--ruler",
+        "value" => $this->size
+      ],
+      [
+        "title" => "Peso",
+        "icon" => "icon--weight",
+        "value" => $this->weight
+      ],
+      [
+        "title" => "Fragancia",
+        "icon" => "icon--plant",
+        "value" => $this->fragance
+      ],
+    ];
   }
 
   /**
    * Get the value of extraImg
+   * @return ExtraImage[] array of ExtraImage objects
    */
   public function getExtraImg(): array
   {
@@ -570,6 +689,17 @@ class Candle
     return $this->tags;
   }
 
+  public function getArrayOfTagsId(): array
+  {
+    $result = [];
+
+    foreach ($this->tags as $tag) {
+      $result[] = $tag->getId();
+    }
+
+    return $result;
+  }
+
   /**
    * Set the value of tags
    *
@@ -578,6 +708,106 @@ class Candle
   public function setTags($tags)
   {
     $this->tags = $tags;
+
+    return $this;
+  }
+
+  /**
+   * Get the value of material
+   */
+  public function getMaterial()
+  {
+    return $this->material;
+  }
+
+  /**
+   * Set the value of material
+   *
+   * @return  self
+   */
+  public function setMaterial($material)
+  {
+    $this->material = $material;
+
+    return $this;
+  }
+
+  /**
+   * Get the value of duration
+   */
+  public function getDuration()
+  {
+    return $this->duration;
+  }
+
+  /**
+   * Set the value of duration
+   *
+   * @return  self
+   */
+  public function setDuration($duration)
+  {
+    $this->duration = $duration;
+
+    return $this;
+  }
+
+  /**
+   * Get the value of size
+   */
+  public function getSize()
+  {
+    return $this->size;
+  }
+
+  /**
+   * Set the value of size
+   *
+   * @return  self
+   */
+  public function setSize($size)
+  {
+    $this->size = $size;
+
+    return $this;
+  }
+
+  /**
+   * Get the value of weight
+   */
+  public function getWeight()
+  {
+    return $this->weight;
+  }
+
+  /**
+   * Set the value of weight
+   *
+   * @return  self
+   */
+  public function setWeight($weight)
+  {
+    $this->weight = $weight;
+
+    return $this;
+  }
+
+  /**
+   * Get the value of fragance
+   */
+  public function getFragance()
+  {
+    return $this->fragance;
+  }
+
+  /**
+   * Set the value of fragance
+   *
+   * @return  self
+   */
+  public function setFragance($fragance)
+  {
+    $this->fragance = $fragance;
 
     return $this;
   }

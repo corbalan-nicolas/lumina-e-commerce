@@ -1,6 +1,6 @@
-<div class="grid place-content-center">
+<div class="grid place-content-center py-12">
   <div>
-    <img class="rounded mx-auto" src="img/corbalan-nicolas.webp" alt="Corbalan Nicolas Leonel">
+    <img class="rounded-full mx-auto mb-4" src="img/corbalan-nicolas.webp" alt="Corbalan Nicolas Leonel">
   </div>
 
 
@@ -27,17 +27,9 @@
     </ul>
 
     <div class="inline-flex bg-gray-100">
-      <button class="p-2">
-        <span class="icon icon--copy"></span>
-        <span class="sr-only">Copiar a portapapeles</span>
-      </button>
-      <p class="p-2 border-x-1">
-        nicolas.lcorbalan@davinci.edu.ar
-      </p>
-      <a class="p-2" href="mailto:nicolas.lcorbalan@davinci.edu.ar">
-        <span class="icon icon--send"></span>
-        <span class="sr-only">Enviar mail</span>
-      </a>
+      <button class="icon icon--copy p-2" data-copy="nicolas.lcorbalan@davinci.edu.ar"></button>
+      <p class="p-2 grow-1 border-x-1">nicolas.lcorbalan@davinci.edu.ar</p>
+      <a class="icon icon--send p-2" href="mailto:nicolas.lcorbalan@davinci.edu.ar"></a>
     </div>
   </div>
 </div>

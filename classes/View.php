@@ -9,14 +9,12 @@ class View
   private $restricted;
 
   /**
-   * Función que valida que la vista pasada por parámetro
-   * esté dentro de la lista blanca, que sea activa, y que
-   * no esté restringida. Caso contrario devuelve 404, 403
-   * o página restringid
-   * a
-   * @param string $view EL "name" de la vista que quieras validar
-   * 
-   * @return View Objeto View con los datos de la vista corespondiente
+   * Retrieves a View object by its name and validates its status.
+   * Returns a 404 or maintenance view if the requested view is not found or inactive.
+   *
+   * @param string|null $view The name of the view to validate.
+   *
+   * @return View The validated View object.
    */
   public static function validate_view(?string $view): View
   {

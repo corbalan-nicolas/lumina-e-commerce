@@ -10,7 +10,7 @@
     <p>Gracias por visitar nuestro sitio web. Estamos acá para asistirte en cualquier consulta que puedas tener 🤗</p>
 
     <div class="flex items-center gap-2">
-      <button id="btnCopyEmail" class="btn btn--outlined my-2">
+      <button id="btnCopyEmail" class="btn btn--outlined btn--text-normal my-2">
         <span class="icon icon--email"></span>
         contacto@lumina.com
       </button>
@@ -49,18 +49,18 @@
   *********************************************************************************
   -->
   <div>
-    <form class="p-4 bg-white rounded" action="index.php?section=form-sent" method="post">
+    <form class="p-4 bg-white rounded" action="index.php?section=contact-response" method="post">
       <h3 class="text-3xl">Hacenos una pregunta</h3>
       <p>Si tenés alguna pregunta, podes contactarnos llenando el formulario de abajo</p>
 
       <div class="grid max-md:sm:grid-cols-2 lg:grid-cols-2 gap-4 mt-6">
         <label>
           <span class="sr-only">Nombre/s</span>
-          <input type="text" name="firstName" placeholder="Nombre/s">
+          <input type="text" name="firstName" placeholder="Nombre/s *" required>
         </label>
         <label>
           <span class="sr-only">Apellido/s</span>
-          <input type="text" name="lastName" placeholder="Apellido/s">
+          <input type="text" name="lastName" placeholder="Apellido/s *" required>
         </label>
         <label>
           <span class="sr-only">Teléfono</span>
@@ -68,11 +68,11 @@
         </label>
         <label>
           <span class="sr-only">Email</span>
-          <input type="email" name="email" placeholder="Email">
+          <input type="email" name="email" placeholder="Email *" required>
         </label>
         <label class="col-span-full">
           <span class="sr-only">Mensaje</span>
-          <textarea name="message" rows="6" placeholder="Mensaje"></textarea>
+          <textarea name="message" rows="6" placeholder="Mensaje *" required></textarea>
         </label>
 
         <button class="btn col-span-full">Enviar</button>

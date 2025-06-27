@@ -6,13 +6,15 @@ Authentication::verifyView(1, "../");
 $formData = $_POST;
 $fileData = $_FILES;
 
-// echo "<pre>";
-// print_r($formData);
-// echo "</pre>";
+echo "<pre>";
+print_r($formData);
+echo "</pre>";
 
-// echo "<pre>";
-// print_r($fileData);
-// echo "</pre>";
+echo "<pre>";
+print_r($fileData);
+echo "</pre>";
+
+die("Pre try{}");
 
 try {
 
@@ -34,23 +36,31 @@ try {
   }
 
   // EXTRA_IMAGES
-  for ($i = 0; $i < count($fileData["extra_images"]["name"]); $i++) {
-    // Tiene que haber una forma más óptima de hacer esto...
-    $file = [
-      "name" => $fileData["extra_images"]["name"][$i],
-      "full_path" => $fileData["extra_images"]["full_path"][$i],
-      "type" => $fileData["extra_images"]["type"][$i],
-      "tmp_name" => $fileData["extra_images"]["tmp_name"][$i],
-      "error" => $fileData["extra_images"]["error"][$i],
-      "size" => $fileData["extra_images"]["size"][$i]
-    ];
+  if (!empty($fileData["extra_images"]["name"][0])) {
+    for ($i = 0; $i < count($fileData["extra_images"]["name"]); $i++) {
+      // Tiene que haber una forma más óptima de hacer esto...
+      $file = [
+        "name" => $fileData["extra_images"]["name"][$i],
+        "full_path" => $fileData["extra_images"]["full_path"][$i],
+        "type" => $fileData["extra_images"]["type"][$i],
+        "tmp_name" => $fileData["extra_images"]["tmp_name"][$i],
+        "error" => $fileData["extra_images"]["error"][$i],
+        "size" => $fileData["extra_images"]["size"][$i]
+      ];
 
-    $filename = Image::uploadImage('../img/candles/carousel/', $file, "c$i-");
+      $filename = Image::uploadImage('../img/candles/carousel/', $file, "c$i-");
 
-    ExtraImage::insert($filename, $id_candle);
+      ExtraImage::insert($filename, $id_candle);
+    }
   }
+
+  Alert::addAlert('success', 'El producto se agregó correctamente');
 } catch (Exception $e) {
-  die("No se pudo cargar el nuevo producto");
+  // echo "<pre>";
+  // print_r($e);
+  // echo "</pre>";
+
+  Alert::addAlert('danger', 'No se pudo agregar el producto, contacte con servicio técnico');
 }
 
 

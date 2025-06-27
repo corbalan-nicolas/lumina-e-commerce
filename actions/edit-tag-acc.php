@@ -12,8 +12,10 @@ $formData = $_GET;
 try {
   $tag = Tag::filter_by_id($formData["id"]);
   $tag->update($formData["tag"]);
+
+  Alert::addAlert('success', 'La etiqueta se editó correctamente');
 } catch (Exception $e) {
-  die("No se pudo actualizar la categoría");
+  Alert::addAlert('danger', 'No se pudo editar la etiqueta');
 }
 
 header("Location: ../dashboard.php?section=admin-tags");

@@ -12,8 +12,10 @@ $formData = $_GET;
 try {
   $category = Category::filter_by_id($formData["id"]);
   $category->update($formData["category"]);
+
+  Alert::addAlert('success', 'La categoría se editó correctamente');
 } catch (Exception $e) {
-  die("No se pudo actualizar la categoría");
+  Alert::addAlert('danger', 'No se pudo editar la categoría, contacte con servicio técnico');
 }
 
 header("Location: ../dashboard.php?section=admin-categories");

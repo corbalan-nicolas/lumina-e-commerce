@@ -61,7 +61,14 @@ class Category
     return $conn->lastInsertId();
   }
 
-  public function update($category)
+  /**
+   * Updates the category name in the database for this category instance.
+   *
+   * @param string $category The new category name.
+   *
+   * @return void
+   */
+  public function update(string $category): void
   {
     $conn = Connection::getConnection();
 
@@ -71,7 +78,12 @@ class Category
     $stmt->execute([$category, $this->id]);
   }
 
-  public function delete()
+  /**
+   * Deletes this category from the database using its ID.
+   *
+   * @return void
+   */
+  public function delete(): void
   {
     $conn = Connection::getConnection();
 

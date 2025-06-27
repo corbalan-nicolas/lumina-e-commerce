@@ -28,6 +28,13 @@ class User
     return $stmt->fetchAll();
   }
 
+  /**
+   * Retrieves a User object by its email address.
+   *
+   * @param string $email The email address of the user to find.
+   *
+   * @return User|null Returns a User instance if found, or null if not.
+   */
   public static function filter_by_email(string $email): ?User
   {
     $conn = Connection::getConnection();

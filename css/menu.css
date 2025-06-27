@@ -3,7 +3,7 @@
   gap: .25rem;
   padding: .5rem .75rem;
 
-  transition: 300ms ease;
+  transition: background-color 300ms ease;
 }
 
 .nav__item:hover,
@@ -12,8 +12,8 @@
   color: white;
 }
 
-/* sm: (40rem || 640px) */
-@media (width <= 640px) {
+/* lg: (64rem || 1024px) */
+@media (width <= 1024px) {
   /*** OPEN / CLOSE BUTTON |> START ***/
   #btnMenu {
     position: sticky;
@@ -70,8 +70,13 @@
     animation: slide-out .5s ease both;
   }
 
+  .menu__title {
+    display: block;
+    margin: .5rem 1rem;
+  }
+
   .menu__body {
-    padding: 2rem 1rem;
+    padding-block: 2rem;
 
     color: var(--col-oscuro);
     background-color: var(--bg-main);
@@ -80,12 +85,12 @@
   }
 
   .nav__item {
-    padding-block: .5rem;
-    margin-block: 4px;
+    padding-inline: 2rem;
+    width: 100%;
+  }
 
-    svg {
-      stroke-width: 1.25;
-    }
+  .nav__sublist-child .nav__item {
+    padding-left: 4rem;
   }
   /*** MENU STYLES |> END ***/
 
@@ -189,7 +194,7 @@
   /*** ACTIVES |> END ***/
 }
 
-@media (width > 640px) {
+@media (width > 1024px) {
   #btnMenu,
   .menu__header,
   .menu__title,
@@ -199,6 +204,22 @@
 
   nav > ul {
     display: flex;
+  }
+
+  /* hidden absolute top-[100%] left-0 w-full bg-(--col-marron) */
+  .nav__sublist-child {
+    display: none;
+    width: 100%;
+
+    position: absolute;
+    top: 100%;
+    left: 0;
+
+    background-color: var(--col-marron);
+  }
+
+  .nav__sublist-parent {
+    position: relative;
   }
 
   nav > ul > li:has(ul):hover ul {

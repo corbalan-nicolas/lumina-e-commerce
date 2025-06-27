@@ -23,6 +23,13 @@ class Tag
     return $stmt->fetchAll();
   }
 
+  /**
+   * Retrieves a Tag object by its ID.
+   *
+   * @param int $id The ID of the tag to find.
+   *
+   * @return Tag|null Returns a Tag instance if found, or null if not.
+   */
   public static function filter_by_id(int $id): ?Tag
   {
     $conn = Connection::getConnection();
@@ -38,7 +45,14 @@ class Tag
     return $res ? $res : null;
   }
 
-  public function update($tag)
+  /**
+   * Updates the tag name in the database for this tag instance.
+   *
+   * @param string $tag The new tag name.
+   *
+   * @return void
+   */
+  public function update(string $tag): void
   {
     $conn = Connection::getConnection();
 
@@ -63,7 +77,12 @@ class Tag
     $stmt->execute([$tag]);
   }
 
-  public function delete()
+  /**
+   * Deletes this tag from the database using its ID.
+   *
+   * @return void
+   */
+  public function delete(): void
   {
     $conn = Connection::getConnection();
 
