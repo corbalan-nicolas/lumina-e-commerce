@@ -226,6 +226,25 @@
     position: relative;
   }
 
+  .nav__sublist-parent .nav__item {
+    padding-right: calc(.75rem + 12px);
+  }
+
+  .nav__sublist-parent::after {
+    content: '';
+
+    pointer-events: none;
+    width: 12px;
+    height: 12px;
+
+    background: url('../img/icons/arrow-right-white.svg') center center no-repeat;
+    transform: rotate(90deg);
+
+    position: absolute;
+    right: .5rem;
+    top: calc(50% - 6px);
+  }
+
   nav > ul > li:has(ul):hover ul {
     display: block;
   }

@@ -44,7 +44,7 @@ $items = Cart::getItems();
 
       <?php if (!$items) { ?>
 
-        <p>No hay productos en tu carrito, parece que la sesión expiró. Lamentamos las molestias que esto pueda ocasionar</p>
+        <p>No hay productos en tu carrito, puede ser que la sesión haya expirado. Lamentamos las molestias que esto pueda ocasionar</p>
 
         <?php } else {
         foreach ($items as $id_candle => $quantity) {
@@ -52,11 +52,13 @@ $items = Cart::getItems();
 
           if ($candle) { ?>
 
-            <div class="grid grid-cols-[auto_1fr_auto] gap-4 items-center">
-              <img class="img-carousel" src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto de producto">
-              <h3>x<?= $quantity ?> <?= $candle->getName() ?></h3>
-              <strong>$<?= $candle->getPrice() * $quantity ?></strong>
-            </div>
+            <ul>
+              <li class="grid grid-cols-[auto_1fr_auto] gap-4 items-center">
+                <img class="img-carousel" src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto de producto">
+                <h3>x<?= $quantity ?> <?= $candle->getName() ?></h3>
+                <strong>$<?= $candle->getPrice() * $quantity ?></strong>
+              </li>
+            </ul>
 
         <?php }
         } ?>

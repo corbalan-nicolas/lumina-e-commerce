@@ -407,6 +407,23 @@ class Candle
   }
 
   /**
+   * Validates if the candle is deletable (if it's not been buyed or if it's not being used by other table)
+   * @return bool true | false
+   */
+  public function isRemovable(): bool
+  {
+    $conn = Connection::getConnection();
+
+    $query = "SELECT * FROM items_x_purchase WHERE id_item = ?";
+
+    $stmt = $conn->prepare($query);
+    $stmt->setFetchMode(PDO::PARAM_BOOL);
+    $stmt->execute([$this->id]);
+
+    return $stmt->fetch() ? false : true;
+  }
+
+  /**
    * Outputs the HTML markup for the product's price inside a <p> element.
    *
    * If the product has a discount, both the original and discounted prices will be shown,
