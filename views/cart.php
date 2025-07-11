@@ -6,6 +6,10 @@ $items = Cart::getItems();
 // print_r($_SESSION);
 // echo "</pre>";
 
+// echo "<pre>";
+// print_r($items);
+// echo "</pre>";
+
 ?>
 
 <div class="p-4">
@@ -20,36 +24,38 @@ $items = Cart::getItems();
           <p>Tu carrito está vacío</p>
           <?php
         } else {
-          foreach ($items as $id_candle => $amount) {
-            $candle = Candle::filter_by_id($id_candle);
+          foreach ($items as $id_candle => $quantity) {
+            $candle = Candle::filter_by_id(intval($id_candle));
 
+            if ($candle) {
           ?>
-            <div class="cart__card">
-              <div class="cart__card-cover">
-                <img src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto de portada del producto">
+              <div class="cart__card">
+                <div class="cart__card-cover">
+                  <img src="img/candles/<?= $candle->getMainImg() ?>" alt="Foto de portada del producto">
+                </div>
+
+                <div class="cart__card-name">
+                  <h3 class="font-bold"><a href="index.php?section=product-detail&id=<?= $candle->getId() ?>"><?= $candle->getName() ?></a></h3>
+                  <p title="Precio por unidad">$<?= $candle->getPrice() ?> p/u</p>
+                </div>
+
+                <p class="cart__card-subtotal"><strong>$<?= number_format(($candle->getPrice() * $quantity), 2) ?></strong></p>
+
+                <div class="cart__card-quantity flex gap-2">
+                  <button class="icon icon--minus" data-function="subtract-item" data-id="<?= $candle->getId() ?>" aria-label="Restar 1">-</button>
+                  <button class="icon icon--plus" data-function="add-item" data-id="<?= $candle->getId() ?>" aria-label="Sumar 1">+</button>
+                  <p id="quantityProd<?= $candle->getId() ?>"><?= $quantity ?></p>
+                </div>
+
+                <a
+                  class="cart__card-remove icon icon--20 icon--close"
+                  href="actions/cart-remove-item-acc.php?id=<?= $candle->getId() ?>"
+                  title="Eliminar <?= $candle->getName() ?> del carrito"
+                  aria-label="Eliminar del carrito">
+                </a>
               </div>
-
-              <div class="cart__card-name">
-                <h3 class="font-bold"><a href="index.php?section=product-detail&id=<?= $candle->getId() ?>"><?= $candle->getName() ?></a></h3>
-                <p title="Precio por unidad">$<?= $candle->getPrice() ?> p/u</p>
-              </div>
-
-              <p class="cart__card-subtotal"><strong>$<?= number_format(($candle->getPrice() * $amount), 2) ?></strong></p>
-
-              <div class="cart__card-amount flex gap-2">
-                <button class="icon icon--minus" data-function="subtract-item" data-id="<?= $candle->getId() ?>" aria-label="Restar 1">-</button>
-                <button class="icon icon--plus" data-function="add-item" data-id="<?= $candle->getId() ?>" aria-label="Sumar 1">+</button>
-                <p id="amountProd<?= $candle->getId() ?>"><?= $amount ?></p>
-              </div>
-
-              <a
-                class="cart__card-remove icon icon--20 icon--close"
-                href="actions/cart-remove-item-acc.php?id=<?= $candle->getId() ?>"
-                title="Eliminar <?= $candle->getName() ?> del carrito"
-                aria-label="Eliminar del carrito">
-              </a>
-            </div>
           <?php
+            }
           }
           ?>
       </div>
@@ -67,7 +73,7 @@ $items = Cart::getItems();
     <div class="cart__checkout">
       <p class="flex justify-between"><span>Total estimado:</span> <strong>USD $<?= number_format(Cart::getTotal(), 2) ?></strong></p>
 
-      <a href="index.php?section=checkout" class="btn btn--text-normal mt-4">Continuar al Pago</a>
+      <a href="index.php?section=checkout-summary" class="btn btn--text-normal mt-4">Continuar al Pago</a>
     </div>
   <?php
         }

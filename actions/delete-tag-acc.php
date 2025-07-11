@@ -1,6 +1,6 @@
 <?php
 require_once "../functions/autoload.php";
-Authentication::verifyView(1, "../");
+Authentication::verifyView(2, "../");
 
 $id = $_GET["id"] ?? 0;
 

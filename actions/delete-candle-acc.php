@@ -1,7 +1,7 @@
 <?php
 
 require_once "../functions/autoload.php";
-Authentication::verifyView(1, "../");
+Authentication::verifyView(2, "../");
 
 $id = $_GET["id"] ?? 0;
 
@@ -11,11 +11,11 @@ try {
   $candle->clearTags();
   $candle->clearExtraImages();
 
-  Image::delete("../img/candles/" . $candle->getMainImg());
+  // Image::delete("../img/candles/" . $candle->getMainImg());
 
-  foreach ($candle->getExtraImg() as $img) {
-    Image::delete("../img/candles/carousel" . $img->getFilename());
-  }
+  // foreach ($candle->getExtraImg() as $img) {
+  //   Image::delete("../img/candles/carousel" . $img->getFilename());
+  // }
 
   $candle->delete();
 
@@ -26,7 +26,14 @@ try {
   // echo "</pre>";
   // die("Error en el catch");
 
-  Alert::addAlert('danger', 'No se pudo eliminar el producto, contacte con servicio técnico');
+  switch ($e->getCode()) {
+    case 23000:
+      Alert::addAlert("danger", "No se puede eliminar este producto porque está siendo utilizado por otra entidad");
+      break;
+    default:
+      Alert::addAlert("danger", "Ocurrió un error desconocido, que vergüenza...");
+      break;
+  }
 }
 
 header("Location: ../dashboard.php?section=admin-products");

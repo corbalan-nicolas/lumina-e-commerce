@@ -11,9 +11,7 @@
                                       ALERTS
   *********************************************************************************
   -->
-  <div>
-    <?= Alert::getAlerts() ?>
-  </div>
+  <?php require_once "includes/alerts.php" ?>
 
 
 

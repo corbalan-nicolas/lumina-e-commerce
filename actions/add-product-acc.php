@@ -1,20 +1,20 @@
 <?php
 
 require_once "../functions/autoload.php";
-Authentication::verifyView(1, "../");
+Authentication::verifyView(2, "../");
 
 $formData = $_POST;
 $fileData = $_FILES;
 
-echo "<pre>";
-print_r($formData);
-echo "</pre>";
+// echo "<pre>";
+// print_r($formData);
+// echo "</pre>";
 
-echo "<pre>";
-print_r($fileData);
-echo "</pre>";
+// echo "<pre>";
+// print_r($fileData);
+// echo "</pre>";
 
-die("Pre try{}");
+// die("Pre try{}");
 
 try {
 

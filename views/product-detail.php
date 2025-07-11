@@ -2,12 +2,12 @@
 
 $candle = Candle::filter_by_id(intval($_GET["id"]) ?? 0);
 
-$candle->getPrice();
-
 if (!$candle) {
 ?>
   <div class="p-4">
-    <h2 class="text-xl font-medium">Producto no encontrado</h2>
+
+    <h2 class="text-4xl font-semibold">Producto no encontrado</h2>
+    <p>El producto que estabas buscando no pudo ser encontrado, o no se encuentra disponible en este momento</p>
   </div>
 <?php
 } else {
@@ -142,7 +142,7 @@ if (!$candle) {
 
         <label>
           <span class="sr-only">Cantidad</span>
-          <input type="number" name="amount" min="1" max="99" value="1" placeholder="Cantidad">
+          <input type="number" name="quantity" min="1" max="99" value="1" placeholder="Cantidad">
         </label>
 
         <button class="btn" type="submit">

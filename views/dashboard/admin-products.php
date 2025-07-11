@@ -17,9 +17,7 @@ $candles = Candle::get_all_products();
                                       ALERTS
   *********************************************************************************
   -->
-  <div class="mb-4">
-    <?= Alert::getAlerts() ?>
-  </div>
+  <?php require_once "includes/alerts.php" ?>
 
 
 

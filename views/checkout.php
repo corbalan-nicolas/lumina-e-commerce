@@ -1,3 +1,0 @@
-<div class="p-4">
-  Checkout en proceso...
-</div>

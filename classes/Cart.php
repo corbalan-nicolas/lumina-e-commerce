@@ -7,16 +7,16 @@ class Cart
    * Adds a candle to the shopping cart or updates its quantity if it already exists
    * 
    * @param int $id_candle The ID of the candle to add.
-   * @param int $amount    (Optional) The quantity to add (default is 1).
+   * @param int $quantity    (Optional) The quantity to add (default is 1).
    *
    * @return void
    */
-  public static function addItem(int $id_candle, int $amount = 1): void
+  public static function addItem(int $id_candle, int $quantity = 1): void
   {
     $candle = Candle::filter_by_id($id_candle);
 
     if ($candle) {
-      $_SESSION["lumina-cart"][$id_candle] = $amount += ($_SESSION["lumina-cart"][$id_candle] ?? 0);
+      $_SESSION["lumina-cart"][$id_candle] = $quantity += ($_SESSION["lumina-cart"][$id_candle] ?? 0);
     }
   }
 
@@ -25,16 +25,16 @@ class Cart
    * Removes the item if the resulting quantity is zero or less.
    *
    * @param int $id_candle The ID of the candle to subtract.
-   * @param int $amount    The quantity to subtract (default is 1).
+   * @param int $quantity    The quantity to subtract (default is 1).
    *
    * @return void
    */
-  public static function subtractItem(int $id_candle, int $amount = 1): void
+  public static function subtractItem(int $id_candle, int $quantity = 1): void
   {
     $candle = Candle::filter_by_id($id_candle);
 
     if ($candle) {
-      $newValue = ($_SESSION["lumina-cart"][$id_candle] ?? 0) - $amount;
+      $newValue = ($_SESSION["lumina-cart"][$id_candle] ?? 0) - $quantity;
       $_SESSION["lumina-cart"][$id_candle] = $newValue;
 
       if ($newValue <= 0) {
@@ -90,9 +90,12 @@ class Cart
     $total = 0;
 
     if (!empty($_SESSION["lumina-cart"])) {
-      foreach ($_SESSION["lumina-cart"] as $id_candle => $amount) {
-        $price = Candle::filter_by_id($id_candle)->getPrice();
-        $total += $price * $amount;
+      foreach ($_SESSION["lumina-cart"] as $id_candle => $quantity) {
+        $candle = Candle::filter_by_id($id_candle);
+
+        if ($candle) {
+          $total += $candle->getPrice() * $quantity;
+        }
       }
     }
 

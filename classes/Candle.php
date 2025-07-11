@@ -23,10 +23,10 @@ class Candle
 
   /**
    * Creates a complex object from a complex array
-   * @param array $candleData An associative array with the params of Candle->createValues + id_category + tags[id] + extra_images[id]
+   * @param array|bool $candleData An associative array with the params of Candle->createValues + id_category + tags[id] + extra_images[id]
    * @return ?Candle A beautiful Candle object
    */
-  public static function createCandle(array $candleData): ?Candle
+  public static function createCandle(array|bool $candleData): ?Candle
   {
     // Salvaguarda 🙏
     if ($candleData === false) {

@@ -17,9 +17,7 @@ $categories = Category::get_all_categories();
                                       ALERTS
   *********************************************************************************
   -->
-  <div class="mb-4">
-    <?= Alert::getAlerts() ?>
-  </div>
+  <?php require_once "includes/alerts.php" ?>
 
 
 
@@ -31,7 +29,7 @@ $categories = Category::get_all_categories();
   *********************************************************************************
   -->
   <form class="mb-4" action="actions/add-category-acc.php" method="get">
-    <input type="text" name="category" placeholder="Nueva categoría" aria-label="Nombre de la categoría">
+    <input type="text" name="category" placeholder="Nueva categoría" aria-label="Nombre de la categoría" required>
     <button class="btn">
       <span class="icon icon--plus-white"></span>
       Añadir nueva categoría
@@ -65,8 +63,8 @@ $categories = Category::get_all_categories();
             <td class="table__td"><?= $category->getId() ?></td>
             <td class="table__td"><?= $category->getName() ?></td>
             <td class="table__td flex justify-end gap-2">
-              <button class="icon icon--pencil" data-function="open-modal-edit" data-id="<?= $category->getId() ?>" data-name="<?= $category->getName() ?>">Editar</button>
-              <button class="icon icon--trash" data-function="open-modal-delete" data-id="<?= $category->getId() ?>" data-name="<?= $category->getName() ?>">Borrar</button>
+              <button title="Editar" class="icon icon--pencil" data-function="open-modal-edit" data-id="<?= $category->getId() ?>" data-name="<?= $category->getName() ?>">Editar</button>
+              <button title="Eliminar" class="icon icon--trash" data-function="open-modal-delete" data-id="<?= $category->getId() ?>" data-name="<?= $category->getName() ?>">Borrar</button>
             </td>
           </tr>
         <?php
@@ -90,7 +88,7 @@ $categories = Category::get_all_categories();
     <p>Editar categoría</p>
     <form action="actions/edit-category-acc.php" method="get">
       <input type="hidden" id="modalEditId" name="id">
-      <input type="text" id="modalEditName" name="category" placeholder="Categoría" autofocus>
+      <input type="text" id="modalEditName" name="category" placeholder="Categoría" aria-label="Nombre de la categoría" required autofocus>
 
       <div class="modal__footer">
         <button id="modalEditClose" class="btn btn--outlined" type="button">Cancelar</button>

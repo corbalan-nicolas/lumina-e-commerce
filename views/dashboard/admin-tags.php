@@ -17,9 +17,7 @@ $tags = Tag::get_all_tags();
                                       ALERTS
   *********************************************************************************
   -->
-  <div class="mb-4">
-    <?= Alert::getAlerts() ?>
-  </div>
+  <?php require_once "includes/alerts.php" ?>
 
 
 
@@ -31,7 +29,7 @@ $tags = Tag::get_all_tags();
   *********************************************************************************
   -->
   <form action="actions/add-tag-acc.php" method="post">
-    <input type="text" name="tag" placeholder="Etiqueta" autofocus>
+    <input type="text" name="tag" placeholder="Etiqueta" aria-label="Nombre de la etiqueta" required autofocus>
     <button class="btn">Añadir nueva etiqueta</button>
   </form>
 
@@ -62,8 +60,8 @@ $tags = Tag::get_all_tags();
             <td class="table__td"><?= $tag->getId() ?></td>
             <td class="table__td"><?= $tag->getTag() ?></td>
             <td class="table__td flex justify-end gap-2">
-              <button class="icon icon--pencil" data-function="open-modal-edit" data-id="<?= $tag->getId() ?>" data-name="<?= $tag->getTag() ?>">Editar</button>
-              <button class="icon icon--trash" data-function="open-modal-delete" data-id="<?= $tag->getId() ?>" data-name="<?= $tag->getTag() ?>">Borrar</button>
+              <button title="Editar" class="icon icon--pencil" data-function="open-modal-edit" data-id="<?= $tag->getId() ?>" data-name="<?= $tag->getTag() ?>">Editar</button>
+              <button title="Eliminar" class="icon icon--trash" data-function="open-modal-delete" data-id="<?= $tag->getId() ?>" data-name="<?= $tag->getTag() ?>">Borrar</button>
             </td>
           </tr>
         <?php
@@ -87,7 +85,7 @@ $tags = Tag::get_all_tags();
     <p>Editar etiqueta</p>
     <form action="actions/edit-tag-acc.php" method="get">
       <input type="hidden" id="modalEditId" name="id">
-      <input type="text" id="modalEditName" name="tag" placeholder="Nombre de la etiqueta" autofocus>
+      <input type="text" id="modalEditName" name="tag" aria-label="Nombre de la etiqueta" placeholder="Nombre de la etiqueta" required autofocus>
 
       <div class="modal__footer">
         <button id="modalEditClose" class="btn btn--outlined" type="button">Cancelar</button>

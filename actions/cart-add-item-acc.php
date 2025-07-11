@@ -3,8 +3,8 @@
 require_once "../functions/autoload.php";
 
 $id_candle = $_GET["id"] ?? 0;
-$amount = $_GET["amount"] ?? 1;
+$quantity = $_GET["quantity"] ?? 1;
 
-Cart::addItem($id_candle, $amount);
+Cart::addItem($id_candle, $quantity);
 
 header("Location: ../index.php?section=cart");
