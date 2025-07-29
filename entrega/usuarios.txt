@@ -1,0 +1,21 @@
+> Superadmin
+---
+Gmail: superadmin@gmail.com
+Contraseña: superadmin
+---
+
+
+
+> Admin
+---
+Gmail: admin@gmail.com
+Contraseña: admin
+---
+
+
+
+> Customer
+---
+Gmail: customer@gmail.com
+Contraseña: customer
+---

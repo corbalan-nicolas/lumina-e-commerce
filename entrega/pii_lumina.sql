@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-06-2025 a las 08:40:45
+-- Tiempo de generación: 11-07-2025 a las 22:14:39
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -44,7 +44,6 @@ CREATE TABLE `candles` (
 --
 
 INSERT INTO `candles` (`id`, `name`, `description`, `id_category`, `main_img`, `price`, `discount`, `css_color`, `date_release`) VALUES
-(5, 'Vainilla', 'Dulce, cálida y reconfortante, la vela de vainilla es ideal para tardes lluviosas, momentos de cocina casera o reuniones íntimas. Su fragancia envuelve la habitación como un abrazo suave y familiar, convirtiendo cualquier espacio en un rincón acogedor donde el tiempo parece pasar más lento.', 2, 'vanilla-cover.webp', 12.00, 0, 'var(--col-vanilla)', '2025-06-27 05:36:48'),
 (6, 'Eucalipto', 'Perfecta para un lunes a la mañana o cualquier momento en que necesites claridad mental, esta vela de eucalipto refresca el ambiente y renueva la energía del espacio. Su aroma herbal y ligeramente mentolado despeja tanto el aire como las ideas, ideal para concentrarse, estudiar o trabajar desde casa.', 3, 'eucalyptus-cover.webp', 15.99, 0, 'var(--col-eucalyptus)', '2025-05-31 00:29:10'),
 (7, 'Rosa Mosqueta', 'Delicada pero con presencia, esta vela con fragancia a rosa mosqueta acompaña muy bien momentos de cuidado personal: una rutina de skincare, una siesta al sol o una tarde de escritura. Su perfume floral aporta una atmósfera elegante y suave, ideal para quienes valoran los pequeños lujos cotidianos.', 1, 'rosehip-cover.webp', 11.99, 15, 'var(--col-rosehip)', '2025-05-31 00:31:47'),
 (8, 'Cítrico', 'Brillante, chispeante y con un toque de verano, esta vela cítrica es la compañera perfecta de una limpieza profunda o una mañana de música y ventanas abiertas. Refresca el ánimo y da vida a cualquier espacio con su fragancia alegre y revitalizante, como un jugo recién exprimido en forma de aroma.', 4, 'citric-cover.webp', 12.49, 0, 'var(--col-citric)', '2025-05-31 00:37:04'),
@@ -82,7 +81,6 @@ CREATE TABLE `candles_details` (
 --
 
 INSERT INTO `candles_details` (`id`, `material`, `duration`, `size`, `weight`, `fragance`) VALUES
-(5, 'Cera vegetal', '45hs', '6cm x 6cm', '200g', 'Vainilla'),
 (6, 'Cera vegetal', '30hs', '7cm x 7cm', '250g', 'Eucalipto'),
 (7, 'Cera de soja', '40hs', '8cm x 8cm', '180g', 'Rosa Mosqueta'),
 (8, 'Cera de soja', '35hs', '8cm x 8cm', '220g', 'Cítrico'),
@@ -119,9 +117,7 @@ CREATE TABLE `candles_x_tags` (
 INSERT INTO `candles_x_tags` (`id`, `id_candle`, `id_tag`) VALUES
 (8, 13, 8),
 (11, 19, 9),
-(12, 16, 9),
-(52, 5, 8),
-(53, 5, 9);
+(12, 16, 9);
 
 -- --------------------------------------------------------
 
@@ -166,10 +162,6 @@ CREATE TABLE `extra_images` (
 --
 
 INSERT INTO `extra_images` (`id`, `filename`, `id_candle`) VALUES
-(7, 'vanilla-2.webp', 5),
-(8, 'vanilla-3.webp', 5),
-(9, 'eucalyptus-2.webp', 6),
-(10, 'eucalyptus-3.webp', 6),
 (11, 'rosehip-2.webp', 7),
 (12, 'rosehip-3.webp', 7),
 (13, 'citric-2.webp', 8),
@@ -200,7 +192,53 @@ INSERT INTO `extra_images` (`id`, `filename`, `id_candle`) VALUES
 (38, 'chocolate-2.webp', 20),
 (39, 'chocolate-3.webp', 20),
 (75, 'lavender-2.webp', 31),
-(76, 'lavender-3.webp', 31);
+(76, 'lavender-3.webp', 31),
+(104, 'eucalyptus-2.webp', 6),
+(105, 'eucalyptus-3.webp', 6);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `items_x_purchase`
+--
+
+CREATE TABLE `items_x_purchase` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `id_purchase` int(10) UNSIGNED NOT NULL,
+  `id_item` int(10) UNSIGNED NOT NULL,
+  `quantity` smallint(5) UNSIGNED NOT NULL,
+  `price` decimal(4,2) NOT NULL,
+  `discount_applied` tinyint(3) UNSIGNED NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `items_x_purchase`
+--
+
+INSERT INTO `items_x_purchase` (`id`, `id_purchase`, `id_item`, `quantity`, `price`, `discount_applied`) VALUES
+(10, 6, 7, 2, 10.19, 15),
+(11, 6, 12, 3, 11.69, 10),
+(12, 6, 15, 1, 11.29, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `purchases`
+--
+
+CREATE TABLE `purchases` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `id_user` int(10) UNSIGNED NOT NULL,
+  `amount` decimal(7,2) NOT NULL,
+  `purchase_date` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `purchases`
+--
+
+INSERT INTO `purchases` (`id`, `id_user`, `amount`, `purchase_date`) VALUES
+(6, 3, 66.74, '2025-07-11 20:09:37');
 
 -- --------------------------------------------------------
 
@@ -241,9 +279,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `rol`, `date_created`) VALUES
-(1, 'Nicolas Leonel Corbalan', 'nicolas.lcorbalan@davinci.edu.ar', '$2y$10$BTvHpBshmHTF.Yoqn.ixNO39RLlcT0l1gpuVpGuyhVBQeQ91I17RG', 'superadmin', '2025-06-19 20:50:46'),
-(2, 'Agueda Rafaela Roda', 'memer@gmail.com', '$2y$10$p4vyT9e.V.x5AFKeeHgcyuz6twZXynqkgg8Oqo3UpeAKlEv30Nhuy', 'customer', '2025-06-19 21:58:43'),
-(3, 'Antonio Nehuen Villar', 'antoniopro@gmail.com', '$2y$10$CwTHfpWOpQ/YBGYdcYvTje6ENgD2sAhbsiV6Xt3T0/4w4MYUmg2cq', 'admin', '2025-06-20 04:08:42');
+(1, 'Nicolas Leonel Corbalan', 'superadmin@gmail.com', '$2y$10$UhLiJ9LzWJkqnuLiyfZWdeQ9osYl6wyrjyW5NSF0xi5FJWtQV8AEm', 'superadmin', '2025-07-08 19:47:48'),
+(2, 'Agueda Rafaela Roda', 'admin@gmail.com', '$2y$10$fmu/H/XMco1BHhFkAxyrOuchZ4f9Rv8WRjP5bEYTwxfCC.xW.N9tS', 'admin', '2025-07-08 19:48:17'),
+(3, 'Antonio Nehuen Villar', 'customer@gmail.com', '$2y$10$klds1vBOJYfitq5j7UmGj.xV2mP5GnuZoIuXbVy0CIk.KHJl1Y/3i', 'customer', '2025-07-08 19:48:35');
 
 -- --------------------------------------------------------
 
@@ -270,18 +308,18 @@ INSERT INTO `views` (`id`, `name`, `title`, `active`, `restricted`) VALUES
 (4, 'product-detail', 'Detalle de producto', 1, 0),
 (5, 'contact-response', 'Consulta enviada', 1, 0),
 (6, 'student', 'Alumno', 1, 0),
-(8, 'admin-products', 'Administrar productos', 1, 1),
-(9, 'admin-categories', 'Administrar categorías', 1, 1),
-(10, 'admin-tags', 'Administrar equiquetas', 1, 1),
-(11, 'admin-users', 'Administrar usuarios', 1, 1),
-(12, 'add-product', 'Añadir producto', 1, 1),
-(13, 'add-user', 'Añadir usuario', 1, 1),
+(8, 'admin-products', 'Administrar productos', 1, 2),
+(9, 'admin-categories', 'Administrar categorías', 1, 2),
+(10, 'admin-tags', 'Administrar equiquetas', 1, 2),
+(11, 'admin-users', 'Administrar usuarios', 1, 2),
+(12, 'add-product', 'Añadir producto', 1, 2),
+(13, 'add-user', 'Añadir usuario', 1, 2),
 (14, 'login', 'Iniciar sesión', 1, 0),
 (15, '403', 'Acceso denegado', 1, 0),
-(16, 'edit-product', 'Editar producto', 1, 1),
+(16, 'edit-product', 'Editar producto', 1, 2),
 (17, 'cart', 'Carrito', 1, 0),
-(18, 'checkout', 'Completar Compra', 1, 0),
-(19, 'user-panel', 'Panel de Usuario', 1, 0);
+(18, 'checkout-summary', 'Completar Compra', 1, 1),
+(19, 'user-panel', 'Panel de Usuario', 1, 1);
 
 --
 -- Índices para tablas volcadas
@@ -322,6 +360,21 @@ ALTER TABLE `extra_images`
   ADD KEY `id_candle` (`id_candle`);
 
 --
+-- Indices de la tabla `items_x_purchase`
+--
+ALTER TABLE `items_x_purchase`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_purchase` (`id_purchase`),
+  ADD KEY `id_item` (`id_item`);
+
+--
+-- Indices de la tabla `purchases`
+--
+ALTER TABLE `purchases`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_user` (`id_user`);
+
+--
 -- Indices de la tabla `tags`
 --
 ALTER TABLE `tags`
@@ -347,31 +400,43 @@ ALTER TABLE `views`
 -- AUTO_INCREMENT de la tabla `candles`
 --
 ALTER TABLE `candles`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de la tabla `candles_x_tags`
 --
 ALTER TABLE `candles_x_tags`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT de la tabla `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `extra_images`
 --
 ALTER TABLE `extra_images`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+
+--
+-- AUTO_INCREMENT de la tabla `items_x_purchase`
+--
+ALTER TABLE `items_x_purchase`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT de la tabla `purchases`
+--
+ALTER TABLE `purchases`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
@@ -413,6 +478,19 @@ ALTER TABLE `candles_x_tags`
 --
 ALTER TABLE `extra_images`
   ADD CONSTRAINT `extra_images_ibfk_1` FOREIGN KEY (`id_candle`) REFERENCES `candles` (`id`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `items_x_purchase`
+--
+ALTER TABLE `items_x_purchase`
+  ADD CONSTRAINT `items_x_purchase_ibfk_1` FOREIGN KEY (`id_purchase`) REFERENCES `purchases` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `items_x_purchase_ibfk_2` FOREIGN KEY (`id_item`) REFERENCES `candles` (`id`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `purchases`
+--
+ALTER TABLE `purchases`
+  ADD CONSTRAINT `purchases_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
